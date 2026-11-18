@@ -168,12 +168,21 @@
       box("side window black rubber surround",.065,1.16,1.20,side*1.315,2.78,z,black);
       box("side passenger glazing",.035,1.07,1.11,side*1.355,2.79,z,glass);
       box("side window centre divider",.04,1.08,.035,side*1.38,2.79,z,black);
+      // Slim aluminium window sill and upper sliding-pane rail.
+      box("side window upper aluminium rail",.035,.035,1.12,side*1.385,3.325,z,chrome);
+      box("side window lower aluminium sill",.035,.035,1.12,side*1.385,2.245,z,chrome);
+      box("sliding window latch",.045,.075,.055,side*1.405,2.39,z+.34,chrome);
+
       for(const curtainZ of [z-.48,z+.48]){
         box("interior window curtain",.025,.96,.045,side*1.325,2.79,curtainZ,seat);
       }
     }
     box("side window lower rubber rail",.055,.065,9.65,side*1.34,2.18,0,black);
     box("side blue belt stripe",.04,.105,10.5,side*1.35,1.72,0,blueDark);
+    // Continuous fine trim separates the window band from the ivory bodywork.
+    box("side upper blue pinstripe",.035,.035,10.42,side*1.365,2.12,0,blue);
+    box("side lower body rub rail",.045,.055,10.2,side*1.365,1.20,0,chrome);
+
     const mirrorArm=box("front mirror support arm",.065,.07,.9,side*1.49,3.04,4.62,black);mirrorArm.rotation.y=side*.22;
     box("large rectangular side mirror housing",.16,.42,.25,side*1.67,3.14,4.2,black);
     box("side mirror glass",.035,.33,.19,side*1.765,3.14,4.2,glassFront);
@@ -186,6 +195,14 @@
     box("door lower blue panel "+idx,.05,.63,.9,side*1.405,1.34,z,blue);
     box("door centre rail "+idx,.055,.06,.9,side*1.43,1.63,z,chrome);
     box("door vertical handle "+idx,.04,.36,.035,side*1.45,1.83,z+.34,chrome);
+    // Door glazing divider, paired hinges and a visible grab rail.
+    box("door glass vertical divider "+idx,.045,1.14,.045,side*1.445,2.27,z,black);
+    for(const hingeY of [1.15,2.52]){
+      box("door hinge "+idx,.045,.18,.09,side*1.455,hingeY,z-.43,chrome);
+    }
+    box("door grab rail "+idx,.045,.72,.055,side*1.46,2.16,z+.37,chrome);
+    box("door lower kick plate "+idx,.045,.12,.72,side*1.455,1.08,z,chrome);
+
     // Visible low entry step.
     box("entry step "+idx,.68,.12,.94,side*1.05,.46,z,chrome);
   }
@@ -210,10 +227,25 @@
       const rim=BABYLON.MeshBuilder.CreateCylinder("wheel rim",{diameter:.62,height:.36,tessellation:32},scene);
       rim.parent=bus;rim.rotation.z=Math.PI/2;rim.position.set(x*1.015,.7,z);rim.material=hub;
       const cap=BABYLON.MeshBuilder.CreateCylinder("wheel hub cap",{diameter:.22,height:.38,tessellation:24},scene);
+      // Six small wheel nuts give the steel hub a more finished mechanical appearance.
+      for(let n=0;n<6;n++){
+        const a=n*Math.PI/3;
+        const nut=BABYLON.MeshBuilder.CreateCylinder("wheel lug nut",{diameter:.065,height:.39,tessellation:12},scene);
+        nut.parent=bus;nut.rotation.z=Math.PI/2;
+        nut.position.set(x*1.03,.7+Math.sin(a)*.235,z+Math.cos(a)*.235);
+        nut.material=chrome;
+      }
+
       cap.parent=bus;cap.rotation.z=Math.PI/2;cap.position.set(x*1.025,.7,z);cap.material=chrome;
     }
   }
   // Rear tail lamps, number plate, and simple bumper.
+  // Side-mounted rectangular route/fleet panel, kept as a blank enamel plate for now.
+  for(const side of [-1,1]){
+    const panel=box("side fleet information plate",.045,.24,.82,side*1.385,1.98,4.82,white);
+    box("side fleet panel border",.05,.28,.86,side*1.36,1.98,4.82,chrome);
+  }
+
   for(const x of [-.94,.94]){
     box("rear lamp housing",.32,.68,.08,x,1.48,-5.51,black);
     box("rear red lamp",.23,.28,.05,x,1.63,-5.57,red);
