@@ -56,11 +56,15 @@
   }
   box("front bumper",2.65,.27,.22,0,.64,5.52,blueDark);
   box("bumper silver edge",2.56,.055,.035,0,.51,5.65,chrome);
-  // Windscreen wipers are thin angled bars across the lower glass.
-  for(const x of [-.48,.48]){
-    const w=box("windscreen wiper",.055,.72,.035,x,2.28,5.59,black);
-    w.rotation.z=x<0?-.2:.2;
-  }
+  // This Venad reference has ONE front wiper on the driver's side.
+  // A slim pivot arm and long blade sit on the lower portion of the one-piece glass.
+  const wiperPivot=BABYLON.MeshBuilder.CreateCylinder("single driver-side wiper pivot",{diameter:.105,height:.055,tessellation:20},scene);
+  wiperPivot.parent=bus;wiperPivot.rotation.x=Math.PI/2;
+  wiperPivot.position.set(-.48,2.22,5.59);wiperPivot.material=black;
+  const wiperArm=box("single windscreen wiper arm",.045,.56,.035,-.48,2.49,5.60,black);
+  wiperArm.rotation.z=-.28;
+  const wiperBlade=box("single windscreen wiper blade",.045,.72,.035,-.48,2.53,5.615,black);
+  wiperBlade.rotation.z=-.28;
   // Side windows: long dark glazing, black dividers and lower body stripe.
   for(const side of [-1,1]){
     box("long blue side belt",.045,.13,10.45,side*1.305,1.72,0,blueDark);
