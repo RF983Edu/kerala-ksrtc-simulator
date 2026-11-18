@@ -3,9 +3,22 @@
   const engine=new BABYLON.Engine(canvas,true);
   const scene=new BABYLON.Scene(engine);
   scene.clearColor=new BABYLON.Color4(.58,.75,.86,1);
+  scene.fogMode=BABYLON.Scene.FOGMODE_EXP2;
+  scene.fogColor=new BABYLON.Color3(.58,.72,.78);
+  scene.fogDensity=.0022;
+  scene.imageProcessingConfiguration.toneMappingEnabled=true;
+  scene.imageProcessingConfiguration.toneMappingType=BABYLON.ImageProcessingConfiguration.TONEMAPPING_ACES;
+  scene.imageProcessingConfiguration.exposure=1.05;
+  scene.imageProcessingConfiguration.contrast=1.12;
+
   new BABYLON.HemisphericLight("sky",new BABYLON.Vector3(0,1,0),scene).intensity=.95;
   const sun=new BABYLON.DirectionalLight("sun",new BABYLON.Vector3(-.4,-1,.3),scene);
   sun.position.set(20,35,-20);sun.intensity=.72;
+  sun.shadowMinZ=1;sun.shadowMaxZ=90;
+  const shadows=new BABYLON.ShadowGenerator(2048,sun);
+  shadows.useBlurExponentialShadowMap=true;shadows.blurKernel=24;
+  shadows.setDarkness(.28);
+
   const mat=(name,color,rough=.65)=>{
     const m=new BABYLON.StandardMaterial(name,scene);
     m.diffuseColor=BABYLON.Color3.FromHexString(color);
@@ -15,6 +28,26 @@
   };
   const grass=mat("Kerala roadside green","#557b4b"),roadMat=mat("Asphalt","#353c44"),white=mat("Venad ivory body","#e9e9df"),blue=mat("Venad sky blue","#65b6d8"),blueDark=mat("Blue lower edge","#2486b5"),glass=mat("Dark bus glass","#263b43"),glassFront=mat("Front windscreen glass","#7399a5"),rubber=mat("Tyre rubber","#111519"),hub=mat("Wheel hubs","#9da6a8"),black=mat("Black trim","#171e22"),chrome=mat("Aluminium trim","#b8c1c2"),lamp=mat("Headlamp glass","#fff2cf"),amber=mat("Amber indicators","#e5a13b"),red=mat("Rear lamps","#a52b26"),seat=mat("Bus seat upholstery","#425a63"),floorMat=mat("Interior floor","#555b59"),board=mat("Destination board","#17252a");
   const ground=BABYLON.MeshBuilder.CreateGround("green landscape",{width:180,height:500},scene);ground.position.z=100;ground.material=grass;
+  ground.receiveShadows=true;
+  const shoulderMat=mat("Road shoulder gravel","#77796f");
+  for(const side of [-1,1]){
+    const shoulder=BABYLON.MeshBuilder.CreateBox("road shoulder",{width:1.25,height:.08,depth:500},scene);
+    shoulder.position.set(side*6.55,.015,100);shoulder.material=shoulderMat;
+    const edge=BABYLON.MeshBuilder.CreateBox("road edge line",{width:.12,height:.025,depth:500},scene);
+    edge.position.set(side*5.82,.095,100);edge.material=lineMat;
+  }
+  // Layered roadside trees create a Kerala roadside silhouette without distracting from the bus.
+  const trunkMat=mat("Tree trunks","#554538"),leafMats=[mat("Foliage deep green","#244b35"),mat("Foliage mid green","#356747"),mat("Foliage light green","#557c4b")];
+  for(let i=0;i<30;i++){
+    const side=i%2?-1:1,z=-130+i*16,x=side*(10+(i%4)*2);
+    const trunk=BABYLON.MeshBuilder.CreateCylinder("roadside tree trunk",{height:3.2+(i%3),diameter:.28,tessellation:8},scene);
+    trunk.position.set(x,1.6,z);trunk.material=trunkMat;
+    for(let j=0;j<3;j++){
+      const crown=BABYLON.MeshBuilder.CreateSphere("roadside tree crown",{diameter:3.2+(j%2)*.8,segments:8},scene);
+      crown.position.set(x+(j-1)*.8,3.8+(j%2)*.65,z+(j%2)*.5);crown.material=leafMats[(i+j)%leafMats.length];
+    }
+  }
+
   const road=BABYLON.MeshBuilder.CreateBox("road",{width:12,height:.12,depth:500},scene);road.position.set(0,.02,100);road.material=roadMat;
   const lineMat=mat("Road markings","#e9dfb7");
   for(let z=-140;z<350;z+=12){const l=BABYLON.MeshBuilder.CreateBox("broken centre line",{width:.14,height:.025,depth:5},scene);l.position.set(0,.09,z);l.material=lineMat}
@@ -197,11 +230,29 @@
     box("side white logo panel",.035,.26,.72,side*1.415,2.0,-.15,white);
   }
   bus.position.set(0,0,-20);
+  // Professional presentation pass: subtle paint highlights, shadows and clean glass reflections.
+  bus.getChildMeshes().forEach(mesh=>{mesh.receiveShadows=true;shadows.addShadowCaster(mesh);});
+  const frontHighlight=box("front upper body highlight trim",2.38,.035,.035,0,2.245,5.49,chrome);
+  const frontLowerSeam=box("front lower panel seam",2.42,.025,.025,0,1.12,5.49,chrome);
+  for(const side of [-1,1]){
+    for(const z of [-4.75,-2.1,.25,2.55,4.7]){
+      const marker=box("side amber marker lamp",.045,.11,.22,side*1.365,1.05,z,amber);
+    }
+    for(const z of [-4.95,4.95]){
+      const mudflap=box("rear wheel mudflap",.045,.62,.72,side*1.38,.46,z,black);
+    }
+    // Fine stainless strips around the window line.
+    box("side upper window belt trim",.035,.035,9.72,side*1.37,3.38,0,chrome);
+  }
+  ground.receiveShadows=true;
+
 
   // Four camera views: chase, smooth follow, orbit and cockpit.
-  const fixedCamera=new BABYLON.UniversalCamera("fixed chase",new BABYLON.Vector3(0,6,-18),scene);
+  const fixedCamera=new BABYLON.UniversalCamera("fixed chase",new BABYLON.Vector3(0,5.4,-17),scene);
+  const busFocus=new BABYLON.Vector3(0,2.0,0);
+
   fixedCamera.parent=bus;fixedCamera.minZ=.1;
-  const smoothCamera=new BABYLON.UniversalCamera("smooth follow",new BABYLON.Vector3(0,7,-30),scene);
+  const smoothCamera=new BABYLON.UniversalCamera("smooth follow",new BABYLON.Vector3(0,6.2,-25),scene);
   smoothCamera.minZ=.1;
   const freeCamera=new BABYLON.ArcRotateCamera("free camera",Math.PI/2,1.12,22,new BABYLON.Vector3(0,2,0),scene);
   freeCamera.lowerRadiusLimit=7;freeCamera.upperRadiusLimit=65;freeCamera.wheelPrecision=35;freeCamera.panningSensibility=70;
@@ -227,7 +278,7 @@
   });
   window.addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
   let velocity=0,steer=0;
-  const smoothPosition=new BABYLON.Vector3(0,7,-30),lookTarget=new BABYLON.Vector3(0,2,0);
+  const smoothPosition=new BABYLON.Vector3(0,6.2,-25),lookTarget=new BABYLON.Vector3(0,2,0);
   scene.onBeforeRenderObservable.add(()=>{
     const dt=Math.min(engine.getDeltaTime()/1000,.04);
     if(keys.w||keys.arrowup)velocity=Math.min(velocity+5*dt,18);
