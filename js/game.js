@@ -1,11 +1,11 @@
 (() => {
-  const canvas = document.getElementById("renderCanvas");
-  const engine = new BABYLON.Engine(canvas, true);
-  const scene = new BABYLON.Scene(engine);
-  scene.clearColor = new BABYLON.Color4(.56,.73,.85,1);
+  const canvas=document.getElementById("renderCanvas");
+  const engine=new BABYLON.Engine(canvas,true);
+  const scene=new BABYLON.Scene(engine);
+  scene.clearColor=new BABYLON.Color4(.56,.73,.85,1);
   new BABYLON.HemisphericLight("sky",new BABYLON.Vector3(0,1,0),scene).intensity=.9;
-  const sun = new BABYLON.DirectionalLight("sun",new BABYLON.Vector3(-.4,-1,.3),scene);
-  sun.position.set(20,35,-20); sun.intensity=.7;
+  const sun=new BABYLON.DirectionalLight("sun",new BABYLON.Vector3(-.4,-1,.3),scene);
+  sun.position.set(20,35,-20);sun.intensity=.7;
   const material=(name,color)=>{const m=new BABYLON.StandardMaterial(name,scene);m.diffuseColor=BABYLON.Color3.FromHexString(color);return m};
   const grass=material("grass","#557b4b"),roadMat=material("road","#353c44"),blue=material("blue bus placeholder","#1764a3"),glass=material("glass","#9ecbd9"),rubber=material("rubber","#171b20"),white=material("building","#d9d3c6"),yellow=material("markings","#f3e8c8");
   const ground=BABYLON.MeshBuilder.CreateGround("ground",{width:180,height:500},scene);ground.position.z=100;ground.material=grass;
@@ -21,13 +21,72 @@
   const wheels=[];
   for(const x of [-1.32,1.32])for(const z of [-2.9,2.9]){const w=BABYLON.MeshBuilder.CreateCylinder("wheel",{diameter:1.1,height:.3,tessellation:24},scene);w.parent=bus;w.rotation.z=Math.PI/2;w.position.set(x,.7,z);w.material=rubber;wheels.push(w)}
   bus.position.set(0,0,-20);
-  const follow=new BABYLON.FollowCamera("third person",new BABYLON.Vector3(0,6,-35),scene);follow.lockedTarget=bus;follow.radius=18;follow.heightOffset=6;follow.rotationOffset=180;follow.cameraAcceleration=.04;follow.maxCameraSpeed=12;
-  const cockpit=new BABYLON.UniversalCamera("cockpit",new BABYLON.Vector3(0,3,0),scene);cockpit.parent=bus;cockpit.position.set(0,3,2.5);cockpit.minZ=.1;
-  scene.activeCamera=follow;follow.attachControl(canvas,true);
-  const keys={};window.addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if(["arrowup","arrowdown","arrowleft","arrowright"].includes(e.key.toLowerCase()))e.preventDefault()});
+
+  // Four stable views: fixed chase, smooth chase, free orbit and cockpit.
+  const fixedCamera=new BABYLON.UniversalCamera("fixed chase",new BABYLON.Vector3(0,6,-18),scene);
+  fixedCamera.parent=bus;fixedCamera.minZ=.1;
+  const smoothCamera=new BABYLON.UniversalCamera("smooth follow",new BABYLON.Vector3(0,6,-30),scene);
+  smoothCamera.minZ=.1;
+  const freeCamera=new BABYLON.ArcRotateCamera("free camera",-Math.PI/2,1.12,22,new BABYLON.Vector3(0,2,0),scene);
+  freeCamera.lowerRadiusLimit=7;freeCamera.upperRadiusLimit=65;freeCamera.wheelPrecision=35;freeCamera.panningSensibility=70;
+  const cockpit=new BABYLON.UniversalCamera("cockpit",new BABYLON.Vector3(0,3,2.5),scene);
+  cockpit.parent=bus;cockpit.minZ=.1;
+  const cameraModes=[
+    {name:"Fixed chase",camera:fixedCamera},
+    {name:"Smooth follow",camera:smoothCamera},
+    {name:"Free camera",camera:freeCamera},
+    {name:"Cockpit",camera:cockpit}
+  ];
+  let cameraIndex=0;
+  const setCamera=()=>{
+    const mode=cameraModes[cameraIndex];
+    [fixedCamera,smoothCamera,freeCamera,cockpit].forEach(c=>c.detachControl());
+    scene.activeCamera=mode.camera;
+    if(mode.camera===freeCamera)freeCamera.attachControl(canvas,true);
+    document.getElementById("cameraLabel").textContent=mode.name;
+  };
+  setCamera();
+  const keys={};
+  window.addEventListener("keydown",e=>{
+    const k=e.key.toLowerCase();
+    if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();
+    keys[k]=true;
+    if(e.repeat)return;
+    if(k==="c"){cameraIndex=(cameraIndex+1)%cameraModes.length;setCamera()}
+    if(k==="r"){bus.position.set(0,0,-20);bus.rotation.y=0;velocity=0}
+  });
   window.addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
-  let velocity=0,steer=0,inCockpit=false;
-  window.addEventListener("keydown",e=>{if(e.repeat)return;if(e.key.toLowerCase()==="c"){inCockpit=!inCockpit;scene.activeCamera=inCockpit?cockpit:follow;if(inCockpit){follow.detachControl();cockpit.attachControl(canvas,true)}else{cockpit.detachControl();follow.attachControl(canvas,true)}document.getElementById("cameraLabel").textContent=inCockpit?"Cockpit":"Third person"}if(e.key.toLowerCase()==="r"){bus.position.set(0,0,-20);bus.rotation.y=0;velocity=0}});
-  scene.onBeforeRenderObservable.add(()=>{const dt=Math.min(engine.getDeltaTime()/1000,.04);if(keys.w||keys.arrowup)velocity=Math.min(velocity+5*dt,18);else if(keys.s||keys.arrowdown)velocity=Math.max(velocity-10*dt,-3);else velocity*=Math.pow(.985,dt*60);const d=(keys.a||keys.arrowleft?-1:0)+(keys.d||keys.arrowright?1:0);steer+=(d-steer)*Math.min(1,dt*5);bus.rotation.y+=steer*velocity*.012*dt;bus.position.x+=Math.sin(bus.rotation.y)*velocity*dt;bus.position.z+=Math.cos(bus.rotation.y)*velocity*dt;bus.position.x=Math.max(-4.4,Math.min(4.4,bus.position.x));wheels.forEach(w=>w.rotation.x+=velocity*dt*1.6);document.getElementById("speed").textContent=Math.round(Math.abs(velocity)*5)});
-  engine.runRenderLoop(()=>scene.render());window.addEventListener("resize",()=>engine.resize());
+  let velocity=0,steer=0;
+  const smoothPosition=new BABYLON.Vector3(0,6,-30);
+  const lookTarget=new BABYLON.Vector3(0,2,0);
+  scene.onBeforeRenderObservable.add(()=>{
+    const dt=Math.min(engine.getDeltaTime()/1000,.04);
+    if(keys.w||keys.arrowup)velocity=Math.min(velocity+5*dt,18);
+    else if(keys.s||keys.arrowdown)velocity=Math.max(velocity-10*dt,-3);
+    else velocity*=Math.pow(.985,dt*60);
+    const d=(keys.a||keys.arrowleft?-1:0)+(keys.d||keys.arrowright?1:0);
+    steer+=(d-steer)*Math.min(1,dt*5);
+    bus.rotation.y+=steer*velocity*.012*dt;
+    bus.position.x+=Math.sin(bus.rotation.y)*velocity*dt;
+    bus.position.z+=Math.cos(bus.rotation.y)*velocity*dt;
+    bus.position.x=Math.max(-4.4,Math.min(4.4,bus.position.x));
+    wheels.forEach(w=>w.rotation.x+=velocity*dt*1.6);
+    // Smooth follow camera eases toward a stable point behind the bus.
+    const heading=bus.rotation.y;
+    const desired=new BABYLON.Vector3(
+      bus.position.x-Math.sin(heading)*25,
+      bus.position.y+7,
+      bus.position.z-Math.cos(heading)*25
+    );
+    const blend=1-Math.exp(-3.2*dt);
+    BABYLON.Vector3.LerpToRef(smoothPosition,desired,blend,smoothPosition);
+    smoothCamera.position.copyFrom(smoothPosition);
+    const target=new BABYLON.Vector3(bus.position.x,bus.position.y+2.1,bus.position.z);
+    BABYLON.Vector3.LerpToRef(lookTarget,target,1-Math.exp(-5*dt),lookTarget);
+    smoothCamera.setTarget(lookTarget);
+    freeCamera.target.copyFrom(target);
+    document.getElementById("speed").textContent=Math.round(Math.abs(velocity)*5);
+  });
+  engine.runRenderLoop(()=>scene.render());
+  window.addEventListener("resize",()=>engine.resize());
 })();
