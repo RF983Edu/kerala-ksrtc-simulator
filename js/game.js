@@ -65,9 +65,10 @@
   badgeCtx.fillStyle="#e8e9e5";badgeCtx.fillRect(0,0,512,128);
   badgeCtx.fillStyle="#17252a";badgeCtx.font="bold 54px Arial";badgeCtx.textAlign="center";badgeCtx.fillText("ASHOK LEYLAND",256,84);badgeTex.update();
   const badgeMat=new BABYLON.StandardMaterial("Ashok Leyland nameplate material",scene);
-  badgeTex.vScale=-1;badgeTex.vOffset=1;
+  // Use a front-facing plane for legible, non-mirrored nameplate lettering.
   badgeMat.diffuseTexture=badgeTex;badgeMat.emissiveColor=new BABYLON.Color3(.12,.12,.12);
-  box("ASHOK LEYLAND nameplate",1.18,.2,.035,0,2.08,5.585,badgeMat);
+  const badgePlate=BABYLON.MeshBuilder.CreatePlane("ASHOK LEYLAND upright nameplate",{width:1.18,height:.2,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+  badgePlate.parent=bus;badgePlate.position.set(0,2.08,5.625);badgePlate.material=badgeMat;
   box("front registration plate",.78,.2,.06,0,.98,5.58,mat("Yellow registration plate","#e8c33c"));
   // Two round lamps set into the lower front corners, as in the supplied photo.
   for(const x of [-.99,.99]){
@@ -79,14 +80,15 @@
   }
   box("full-width blue front bumper",2.65,.27,.22,0,.64,5.52,blueDark);
   box("bumper narrow silver edge",2.56,.045,.035,0,.50,5.65,chrome);
-  // One driver's-side wiper only. Pivot at lower glass edge, blade angled upward.
-  const wiperPivot=BABYLON.MeshBuilder.CreateCylinder("single driver-side wiper pivot",{diameter:.075,height:.045,tessellation:20},scene);
+  // Single driver's-side wiper: pivot and motor sit at the LOWER edge of the windscreen.
+  // The short arm rises from the bottom pivot; the blade lies across the lower glass.
+  const wiperPivot=BABYLON.MeshBuilder.CreateCylinder("single driver-side wiper lower pivot",{diameter:.085,height:.055,tessellation:24},scene);
   wiperPivot.parent=bus;wiperPivot.rotation.x=Math.PI/2;
-  wiperPivot.position.set(.43,2.23,5.585);wiperPivot.material=black;
-  const wiperArm=box("single windscreen wiper arm",.035,.53,.028,.32,2.43,5.61,black);
-  wiperArm.rotation.z=.42;
-  const wiperBlade=box("single windscreen wiper blade",.045,.78,.035,.12,2.58,5.625,black);
-  wiperBlade.rotation.z=.42;
+  wiperPivot.position.set(.58,2.235,5.602);wiperPivot.material=black;
+  const wiperArm=box("single windscreen wiper arm",.045,.48,.035,.43,2.445,5.635,black);
+  wiperArm.rotation.z=-.48;
+  const wiperBlade=box("single windscreen wiper blade",.72,.035,.04,.18,2.665,5.65,black);
+  wiperBlade.rotation.z=-.12;
   // Tall rectangular passenger windows with dark rubber surrounds and curtains.
   for(const side of [-1,1]){
     for(let i=0;i<7;i++){
@@ -174,7 +176,14 @@
   steering.parent=interior;steering.position.set(.62,2.18,4.78);steering.rotation.x=Math.PI/2;steering.material=black;
   // Small livery details and visible text decals are represented as simple raised panels.
   box("VENAD lettering plate",.78,.18,.045,0,2.18,5.57,white);
-  box("KSRTC front lettering strip",1.75,.22,.035,0,3.19,5.58,blue);
+  // Keep the front lettering clear of the windscreen and destination display.
+  const ksrtcFrontTex=new BABYLON.DynamicTexture("upright front KSRTC lettering",{width:512,height:96},scene,false);
+  const kctx=ksrtcFrontTex.getContext();kctx.clearRect(0,0,512,96);
+  kctx.fillStyle="#1676b5";kctx.font="bold 68px Arial";kctx.textAlign="center";kctx.fillText("KSRTC",256,72);ksrtcFrontTex.update();
+  const ksrtcFrontMat=new BABYLON.StandardMaterial("front KSRTC lettering material",scene);
+  ksrtcFrontMat.diffuseTexture=ksrtcFrontTex;ksrtcFrontMat.emissiveColor=new BABYLON.Color3(.18,.18,.18);ksrtcFrontMat.backFaceCulling=false;
+  const ksrtcFront=BABYLON.MeshBuilder.CreatePlane("front KSRTC upright lettering",{width:1.15,height:.22,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+  ksrtcFront.parent=bus;ksrtcFront.position.set(0,3.20,5.59);ksrtcFront.material=ksrtcFrontMat;
   // Small side route/branding panels.
   for(const side of [-1,1]){
     box("side VENAD branding panel",.035,.42,1.12,side*1.39,1.98,-.15,blueDark);
