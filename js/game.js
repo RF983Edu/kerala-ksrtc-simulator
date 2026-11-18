@@ -114,12 +114,17 @@
   // Rear glass and rear destination/route panel.
   box("rear window surround",2.12,1.02,.08,0,2.83,-5.47,black);
   box("rear window",2.02,.91,.04,0,2.83,-5.525,glass);
-  // Rear glazing finish: slim rubber bead and subtle horizontal glass divisions.
+  // Rear glazing finish: slim rubber bead, horizontal divisions and corner seals.
   box("rear glass inner rubber bead",1.94,.82,.025,0,2.83,-5.55,black);
   box("rear glass inset pane",1.86,.74,.018,0,2.83,-5.568,glass);
   for(let i=0;i<3;i++){
     box("rear window horizontal divider "+i,1.82,.012,.018,0,2.59+i*.24,-5.585,chrome);
   }
+  for(const x of [-.91,.91]){
+    box("rear window vertical edge seal",.025,.76,.025,x,2.83,-5.585,black);
+  }
+  box("rear window lower sill",1.9,.045,.035,0,2.34,-5.59,chrome);
+  box("rear window upper seal",1.9,.035,.03,0,3.29,-5.585,black);
 
   box("rear route panel",1.45,.25,.07,0,3.39,-5.49,board);
   // Traditional squared front face with broad ribbed Leyland grille.
