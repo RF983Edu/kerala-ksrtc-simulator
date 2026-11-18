@@ -29,22 +29,22 @@
     p.parent=bus;p.position.set(x,y,z);p.material=mat;return p;
   };
   // Destination display panel and front windscreen wipers.
-  addFrontPart("destination display",1.85,.28,.09,0,3.43,5.47,board);
-  addFrontPart("display lower trim",1.92,.07,.11,0,3.26,5.48,chrome);
+  addFrontPart("destination display",1.85,.28,.09,0,3.43,5.72,board);
+  addFrontPart("display lower trim",1.92,.07,.11,0,3.26,5.72,chrome);
   for(const x of [-.62,.62]){
-    const wiper=addFrontPart("windscreen wiper",.72,.045,.045,x,2.25,5.49,black);
+    const wiper=addFrontPart("windscreen wiper",.72,.045,.045,x,2.25,5.72,black);
     wiper.rotation.z=x<0?-.12:.12;
   }
   // Grille, paired headlights, indicators and bumper.
-  addFrontPart("front grille",.92,.48,.12,0,1.65,5.48,black);
-  addFrontPart("grille centre bar",.08,.43,.035,0,1.65,5.56,chrome);
+  addFrontPart("front grille",.92,.48,.12,0,1.65,5.72,black);
+  addFrontPart("grille centre bar",.08,.43,.035,0,1.65,5.81,chrome);
   for(const x of [-.91,.91]){
-    addFrontPart("headlight housing",.48,.34,.13,x,1.34,5.49,black);
-    addFrontPart("headlight lens",.36,.22,.05,x,1.35,5.57,lamp);
-    addFrontPart("front indicator",.25,.17,.12,x*1.17,1.34,5.49,amber);
+    addFrontPart("headlight housing",.48,.34,.13,x,1.34,5.72,black);
+    addFrontPart("headlight lens",.36,.22,.05,x,1.35,5.84,lamp);
+    addFrontPart("front indicator",.25,.17,.12,x*1.17,1.34,5.72,amber);
   }
-  addFrontPart("front bumper",2.62,.28,.22,0,.66,5.48,chrome);
-  addFrontPart("bumper centre",.72,.12,.04,0,.66,5.61,black);
+  addFrontPart("front bumper",2.62,.28,.22,0,.66,5.72,chrome);
+  addFrontPart("bumper centre",.72,.12,.04,0,.66,5.86,black);
   // Mirror arms and mirror housings on both sides.
   for(const side of [-1,1]){
     const arm=addFrontPart("mirror arm",.07,.07,.85,side*1.48,3.12,4.72,black);
@@ -61,7 +61,7 @@
   fixedCamera.parent=bus;fixedCamera.minZ=.1;
   const smoothCamera=new BABYLON.UniversalCamera("smooth follow",new BABYLON.Vector3(0,6,-30),scene);
   smoothCamera.minZ=.1;
-  const freeCamera=new BABYLON.ArcRotateCamera("free camera",-Math.PI/2,1.12,22,new BABYLON.Vector3(0,2,0),scene);
+  const freeCamera=new BABYLON.ArcRotateCamera("free camera",Math.PI/2,1.12,22,new BABYLON.Vector3(0,2,0),scene);
   freeCamera.lowerRadiusLimit=7;freeCamera.upperRadiusLimit=65;freeCamera.wheelPrecision=35;freeCamera.panningSensibility=70;
   const cockpit=new BABYLON.UniversalCamera("cockpit",new BABYLON.Vector3(0,3,2.5),scene);
   cockpit.parent=bus;cockpit.minZ=.1;
