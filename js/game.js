@@ -19,6 +19,8 @@
   shadows.useBlurExponentialShadowMap=true;shadows.blurKernel=24;
   shadows.setDarkness(.28);
 
+  // Babylon plane UVs need a horizontal texture flip for legible exterior decals.
+  const makeTextReadable=(texture)=>{texture.uScale=-1;texture.uOffset=1;return texture;};
   const mat=(name,color,rough=.65)=>{
     const m=new BABYLON.StandardMaterial(name,scene);
     m.diffuseColor=BABYLON.Color3.FromHexString(color);
@@ -95,6 +97,7 @@
   const ksrtcStickerTex=new BABYLON.DynamicTexture("KSRTC upper windscreen sticker",{width:512,height:160},scene,false);
   const ks=ksrtcStickerTex.getContext();ks.fillStyle="#e9f2f4";ks.fillRect(0,0,512,160);
   ks.fillStyle="#1676b5";ks.font="bold 104px Arial";ks.textAlign="center";ks.fillText("KSRTC",256,116);ksrtcStickerTex.update();
+  makeTextReadable(ksrtcStickerTex);
   const ksrtcStickerMat=new BABYLON.StandardMaterial("KSRTC sticker material",scene);
   ksrtcStickerMat.diffuseTexture=ksrtcStickerTex;ksrtcStickerMat.emissiveColor=new BABYLON.Color3(.12,.12,.12);ksrtcStickerMat.backFaceCulling=false;
   const ksrtcSticker=BABYLON.MeshBuilder.CreatePlane("KSRTC upper-left glass sticker",{width:1.05,height:.32,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
@@ -103,6 +106,7 @@
   const destinationTex=new BABYLON.DynamicTexture("destination display lettering",{width:512,height:128},scene,false);
   const dc=destinationTex.getContext();dc.fillStyle="#17252a";dc.fillRect(0,0,512,128);
   dc.fillStyle="#d8e0dc";dc.font="bold 42px Arial";dc.textAlign="center";dc.fillText("PALAKKAD",256,82);destinationTex.update();
+  makeTextReadable(destinationTex);
   const destinationMat=new BABYLON.StandardMaterial("destination lettering material",scene);
   destinationMat.diffuseTexture=destinationTex;destinationMat.emissiveColor=new BABYLON.Color3(.08,.08,.08);destinationMat.backFaceCulling=false;
   const destinationText=BABYLON.MeshBuilder.CreatePlane("destination text on glass",{width:.84,height:.17,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
@@ -123,6 +127,7 @@
   const badgeCtx=badgeTex.getContext();
   badgeCtx.fillStyle="#e8e9e5";badgeCtx.fillRect(0,0,512,128);
   badgeCtx.fillStyle="#17252a";badgeCtx.font="bold 54px Arial";badgeCtx.textAlign="center";badgeCtx.fillText("ASHOK LEYLAND",256,84);badgeTex.update();
+  makeTextReadable(badgeTex);
   const badgeMat=new BABYLON.StandardMaterial("Ashok Leyland nameplate material",scene);
   // Use a front-facing plane for legible, non-mirrored nameplate lettering.
   badgeMat.diffuseTexture=badgeTex;badgeMat.emissiveColor=new BABYLON.Color3(.12,.12,.12);
@@ -132,6 +137,7 @@
   const regTex=new BABYLON.DynamicTexture("Kerala registration lettering",{width:512,height:128},scene,false);
   const rc=regTex.getContext();rc.fillStyle="#e8c33c";rc.fillRect(0,0,512,128);
   rc.fillStyle="#18252b";rc.font="bold 76px Arial";rc.textAlign="center";rc.fillText("KL 15 8119",256,88);regTex.update();
+  makeTextReadable(regTex);
   const regMat=new BABYLON.StandardMaterial("registration lettering material",scene);
   regMat.diffuseTexture=regTex;regMat.emissiveColor=new BABYLON.Color3(.08,.07,.02);regMat.backFaceCulling=false;
   const regText=BABYLON.MeshBuilder.CreatePlane("front registration lettering",{width:.73,height:.18,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
@@ -255,6 +261,7 @@
   box("VENAD lettering plate",.78,.18,.045,0,2.18,5.57,white);
   const venadTex=new BABYLON.DynamicTexture("VENAD red lettering",{width:384,height:96},scene,false);
   const vc=venadTex.getContext();vc.clearRect(0,0,384,96);vc.fillStyle="#9c3441";vc.font="italic bold 62px Georgia";vc.textAlign="center";vc.fillText("VENAD",192,70);venadTex.update();
+  makeTextReadable(venadTex);
   const venadMat=new BABYLON.StandardMaterial("VENAD lettering material",scene);
   venadMat.diffuseTexture=venadTex;venadMat.emissiveColor=new BABYLON.Color3(.1,.025,.03);venadMat.backFaceCulling=false;
   const venadText=BABYLON.MeshBuilder.CreatePlane("VENAD front lettering",{width:.70,height:.16,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
@@ -264,6 +271,7 @@
   // Fleet number on the front-left body panel (not repeated across the glass).
   const fleetTex=new BABYLON.DynamicTexture("front fleet number texture",{width:384,height:128},scene,false);
   const ft=fleetTex.getContext();ft.clearRect(0,0,384,128);ft.fillStyle="#a63848";ft.font="bold 76px Arial";ft.textAlign="center";ft.fillText("EAC 934",192,88);fleetTex.update();
+  makeTextReadable(fleetTex);
   const fleetMat=new BABYLON.StandardMaterial("front fleet number material",scene);
   fleetMat.diffuseTexture=fleetTex;fleetMat.emissiveColor=new BABYLON.Color3(.12,.04,.04);fleetMat.backFaceCulling=false;
   const fleetNo=BABYLON.MeshBuilder.CreatePlane("front fleet number",{width:.72,height:.24,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
