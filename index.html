@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kerala KSRTC Simulator</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header><div><small>RF983 STUDIOS • DEVELOPMENT BUILD</small><h1>KERALA KSRTC SIMULATOR</h1></div><span class="pill">3D PROTOTYPE</span></header>
+  <main>
+    <section class="stage">
+      <canvas id="renderCanvas"></canvas>
+      <div class="hud">
+        <div class="panel"><small>VEHICLE</small><b>KSRTC BLUE BUS</b><small>Temporary blockout model</small></div>
+        <div class="panel speed"><small>SPEED</small><b><span id="speed">0</span> km/h</b></div>
+        <div class="panel"><small>CAMERA</small><b id="cameraLabel">Third person</b></div>
+      </div>
+      <div class="controls">W / ↑ Accelerate · S / ↓ Brake · A D / ← → Steer · C Camera · R Reset</div>
+    </section>
+    <section class="intro">
+      <div><small>PHASE 02 • FIRST PLAYABLE FOUNDATION</small><h2>Our first 3D driving prototype</h2><p>This is an early technical test: a placeholder blue bus, a simple road, basic steering, acceleration, braking, speed display and two camera views. It is not yet the accurate KSRTC vehicle or the real Thrissur–Palakkad route.</p></div>
+      <aside><b>What comes next</b><p>Identify the exact Ashok Leyland vehicle configuration, model it in Blender, then replace this placeholder and build the researched route environment.</p></aside>
+    </section>
+  </main>
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
