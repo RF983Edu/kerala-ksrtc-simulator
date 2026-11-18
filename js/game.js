@@ -18,6 +18,40 @@
   const wind=BABYLON.MeshBuilder.CreateBox("front windshield",{width:2.25,height:1,depth:.06},scene);wind.parent=bus;wind.position.set(0,2.8,5.43);wind.material=glass;
   const rear=BABYLON.MeshBuilder.CreateBox("rear glass",{width:2.1,height:.85,depth:.06},scene);rear.parent=bus;rear.position.set(0,2.8,-5.43);rear.material=glass;
   for(const side of [-1,1])for(let i=0;i<6;i++){const w=BABYLON.MeshBuilder.CreateBox("side window",{width:.06,height:.82,depth:1.35},scene);w.parent=bus;w.position.set(side*1.29,2.8,3.35-i*1.34);w.material=glass}
+  // Front fascia details: an early KSRTC-style blockout, to be refined against photos.
+  const chrome=material("front trim","#b9c4c9");
+  const black=material("grille","#202a32");
+  const lamp=material("headlamp","#fff3c4");
+  const amber=material("indicator","#e99a35");
+  const board=material("destination board","#17212b");
+  const addFrontPart=(name,w,h,d,x,y,z,mat)=>{
+    const p=BABYLON.MeshBuilder.CreateBox(name,{width:w,height:h,depth:d},scene);
+    p.parent=bus;p.position.set(x,y,z);p.material=mat;return p;
+  };
+  // Destination display panel and front windscreen wipers.
+  addFrontPart("destination display",1.85,.28,.09,0,3.43,5.47,board);
+  addFrontPart("display lower trim",1.92,.07,.11,0,3.26,5.48,chrome);
+  for(const x of [-.62,.62]){
+    const wiper=addFrontPart("windscreen wiper",.72,.045,.045,x,2.25,5.49,black);
+    wiper.rotation.z=x<0?-.12:.12;
+  }
+  // Grille, paired headlights, indicators and bumper.
+  addFrontPart("front grille",.92,.48,.12,0,1.65,5.48,black);
+  addFrontPart("grille centre bar",.08,.43,.035,0,1.65,5.56,chrome);
+  for(const x of [-.91,.91]){
+    addFrontPart("headlight housing",.48,.34,.13,x,1.34,5.49,black);
+    addFrontPart("headlight lens",.36,.22,.05,x,1.35,5.57,lamp);
+    addFrontPart("front indicator",.25,.17,.12,x*1.17,1.34,5.49,amber);
+  }
+  addFrontPart("front bumper",2.62,.28,.22,0,.66,5.48,chrome);
+  addFrontPart("bumper centre",.72,.12,.04,0,.66,5.61,black);
+  // Mirror arms and mirror housings on both sides.
+  for(const side of [-1,1]){
+    const arm=addFrontPart("mirror arm",.07,.07,.85,side*1.48,3.12,4.72,black);
+    arm.rotation.y=side*.18;
+    addFrontPart("side mirror",.18,.48,.16,side*1.76,3.2,4.34,black);
+    addFrontPart("mirror glass",.035,.34,.11,side*1.86,3.2,4.34,glass);
+  }
   const wheels=[];
   for(const x of [-1.32,1.32])for(const z of [-3.45,3.45]){const w=BABYLON.MeshBuilder.CreateCylinder("wheel",{diameter:1.1,height:.3,tessellation:24},scene);w.parent=bus;w.rotation.z=Math.PI/2;w.position.set(x,.7,z);w.material=rubber;wheels.push(w)}
   bus.position.set(0,0,-20);
