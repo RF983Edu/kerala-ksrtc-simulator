@@ -18,6 +18,47 @@
   const wind=BABYLON.MeshBuilder.CreateBox("front windshield",{width:2.25,height:1,depth:.06},scene);wind.parent=bus;wind.position.set(0,2.8,5.43);wind.material=glass;
   const rear=BABYLON.MeshBuilder.CreateBox("rear glass",{width:2.1,height:.85,depth:.06},scene);rear.parent=bus;rear.position.set(0,2.8,-5.43);rear.material=glass;
   for(const side of [-1,1])for(let i=0;i<6;i++){const w=BABYLON.MeshBuilder.CreateBox("side window",{width:.06,height:.82,depth:1.35},scene);w.parent=bus;w.position.set(side*1.29,2.8,3.35-i*1.34);w.material=glass}
+  // Side body: passenger door, window framing, livery stripe and service panels.
+  const sideWhite=material("KSRTC white side stripe","#f0f1e9");
+  const doorFrame=material("passenger door frame","#182a38");
+  const doorGlass=material("passenger door glass","#8dbdce");
+  const panelBlue=material("side access panels","#104d80");
+  const sideTrim=material("side trim","#c4cbd0");
+  for(const side of [-1,1]){
+    // Continuous white belt line below the passenger windows.
+    const stripe=BABYLON.MeshBuilder.CreateBox("white KSRTC side belt",{width:.045,height:.16,depth:10.55},scene);
+    stripe.parent=bus;stripe.position.set(side*1.305,1.72,0);stripe.material=sideWhite;
+    // Window pillars and lower window rails make the glazing read as separate panes.
+    for(let i=0;i<=6;i++){
+      const z=3.98-i*1.34;
+      const pillar=BABYLON.MeshBuilder.CreateBox("side window pillar",{width:.075,height:.94,depth:.075},scene);
+      pillar.parent=bus;pillar.position.set(side*1.315,2.8,z);pillar.material=doorFrame;
+    }
+    const rail=BABYLON.MeshBuilder.CreateBox("side window lower rail",{width:.07,height:.07,depth:8.2},scene);
+    rail.parent=bus;rail.position.set(side*1.315,2.34,0);rail.material=doorFrame;
+  }
+  // Passenger entrance on the left side, toward the front of the bus.
+  const entrySide=-1;
+  const doorOuter=BABYLON.MeshBuilder.CreateBox("passenger entrance surround",{width:.09,height:2.22,depth:1.05},scene);
+  doorOuter.parent=bus;doorOuter.position.set(entrySide*1.32,1.94,3.15);doorOuter.material=doorFrame;
+  const doorPane=BABYLON.MeshBuilder.CreateBox("passenger door glass",{width:.045,height:1.38,depth:.88},scene);
+  doorPane.parent=bus;doorPane.position.set(entrySide*1.375,2.28,3.15);doorPane.material=doorGlass;
+  const doorLower=BABYLON.MeshBuilder.CreateBox("passenger door lower panel",{width:.05,height:.48,depth:.9},scene);
+  doorLower.parent=bus;doorLower.position.set(entrySide*1.375,1.34,3.15);doorLower.material=panelBlue;
+  for(const z of [-3.35,-1.95]){
+    const arch=BABYLON.MeshBuilder.CreateTorus("wheel arch trim",{diameter:1.48,thickness:.09,tessellation:32},scene);
+    arch.parent=bus;arch.rotation.y=Math.PI/2;arch.position.set(1.305,.72,z);arch.material=doorFrame;
+    const arch2=BABYLON.MeshBuilder.CreateTorus("wheel arch trim opposite",{diameter:1.48,thickness:.09,tessellation:32},scene);
+    arch2.parent=bus;arch2.rotation.y=Math.PI/2;arch2.position.set(-1.305,.72,z);arch2.material=doorFrame;
+  }
+  // Luggage/service compartment doors on the opposite lower side.
+  for(let i=0;i<3;i++){
+    const z=2.45-i*2.35;
+    const hatch=BABYLON.MeshBuilder.CreateBox("luggage compartment panel",{width:.055,height:.55,depth:1.95},scene);
+    hatch.parent=bus;hatch.position.set(1.315,.99,z);hatch.material=panelBlue;
+    const seam=BABYLON.MeshBuilder.CreateBox("luggage panel seam",{width:.025,height:.035,depth:1.82},scene);
+    seam.parent=bus;seam.position.set(1.35,1.27,z);seam.material=sideTrim;
+  }
   // Front fascia details: an early KSRTC-style blockout, to be refined against photos.
   const chrome=material("front trim","#b9c4c9");
   const black=material("grille","#202a32");
