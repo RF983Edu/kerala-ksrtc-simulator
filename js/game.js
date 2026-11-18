@@ -47,15 +47,15 @@
   const ksrtcStickerMat=new BABYLON.StandardMaterial("KSRTC sticker material",scene);
   ksrtcStickerMat.diffuseTexture=ksrtcStickerTex;ksrtcStickerMat.emissiveColor=new BABYLON.Color3(.12,.12,.12);ksrtcStickerMat.backFaceCulling=false;
   const ksrtcSticker=BABYLON.MeshBuilder.CreatePlane("KSRTC upper-left glass sticker",{width:1.05,height:.32,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
-  ksrtcSticker.parent=bus;ksrtcSticker.position.set(-.58,3.29,5.575);ksrtcSticker.material=ksrtcStickerMat;
-  const destination=box("upper-right destination display",.92,.22,.035,.60,3.30,5.575,board);
+  ksrtcSticker.parent=bus;ksrtcSticker.position.set(.58,3.29,5.575);ksrtcSticker.material=ksrtcStickerMat;
+  const destination=box("upper-right destination display",.92,.22,.035,-.60,3.30,5.575,board);
   const destinationTex=new BABYLON.DynamicTexture("destination display lettering",{width:512,height:128},scene,false);
   const dc=destinationTex.getContext();dc.fillStyle="#17252a";dc.fillRect(0,0,512,128);
-  dc.fillStyle="#d8e0dc";dc.font="bold 42px Arial";dc.textAlign="center";dc.fillText("THRISSUR",256,82);destinationTex.update();
+  dc.fillStyle="#d8e0dc";dc.font="bold 42px Arial";dc.textAlign="center";dc.fillText("PALAKKAD",256,82);destinationTex.update();
   const destinationMat=new BABYLON.StandardMaterial("destination lettering material",scene);
   destinationMat.diffuseTexture=destinationTex;destinationMat.emissiveColor=new BABYLON.Color3(.08,.08,.08);destinationMat.backFaceCulling=false;
   const destinationText=BABYLON.MeshBuilder.CreatePlane("destination text on glass",{width:.84,height:.17,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
-  destinationText.parent=bus;destinationText.position.set(.60,3.30,5.60);destinationText.material=destinationMat;
+  destinationText.parent=bus;destinationText.position.set(-.60,3.30,5.60);destinationText.material=destinationMat;
   // Rear glass and rear destination/route panel.
   box("rear window surround",2.12,1.02,.08,0,2.83,-5.47,black);
   box("rear window",2.02,.91,.04,0,2.83,-5.525,glass);
@@ -91,10 +91,10 @@
   // ONE driver's-side wiper, mounted at the upper windscreen edge.
   const wiperPivot=BABYLON.MeshBuilder.CreateCylinder("single upper driver-side wiper pivot",{diameter:.085,height:.055,tessellation:24},scene);
   wiperPivot.parent=bus;wiperPivot.rotation.x=Math.PI/2;
-  wiperPivot.position.set(-.48,3.445,5.602);wiperPivot.material=black;
-  const wiperArm=box("single upper-mounted windscreen wiper arm",.045,.88,.035,-.43,2.99,5.635,black);
+  wiperPivot.position.set(.48,3.445,5.602);wiperPivot.material=black;
+  const wiperArm=box("single upper-mounted windscreen wiper arm",.045,.88,.035,.43,2.99,5.635,black);
   wiperArm.rotation.z=.12;
-  const wiperBlade=box("single windscreen wiper blade",.62,.035,.04,-.56,2.58,5.65,black);
+  const wiperBlade=box("single windscreen wiper blade",.62,.035,.04,.56,2.58,5.65,black);
   wiperBlade.rotation.z=-.30;
   // Tall rectangular passenger windows with dark rubber surrounds and curtains.
   for(const side of [-1,1]){
@@ -190,7 +190,7 @@
   const fleetMat=new BABYLON.StandardMaterial("front fleet number material",scene);
   fleetMat.diffuseTexture=fleetTex;fleetMat.emissiveColor=new BABYLON.Color3(.12,.04,.04);fleetMat.backFaceCulling=false;
   const fleetNo=BABYLON.MeshBuilder.CreatePlane("front fleet number",{width:.72,height:.24,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
-  fleetNo.parent=bus;fleetNo.position.set(-.93,2.02,5.59);fleetNo.material=fleetMat;
+  fleetNo.parent=bus;fleetNo.position.set(.93,2.02,5.59);fleetNo.material=fleetMat;
   // Small side route/branding panels.
   for(const side of [-1,1]){
     box("side VENAD branding panel",.035,.42,1.12,side*1.39,1.98,-.15,blueDark);
