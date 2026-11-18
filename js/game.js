@@ -233,6 +233,18 @@
       tyre.parent=bus;tyre.rotation.z=Math.PI/2;tyre.position.set(x,.7,z);tyre.material=rubber;wheels.push(tyre);
       const rim=BABYLON.MeshBuilder.CreateCylinder("wheel rim",{diameter:.62,height:.36,tessellation:32},scene);
       rim.parent=bus;rim.rotation.z=Math.PI/2;rim.position.set(x*1.015,.7,z);rim.material=hub;
+      // Concentric steel-rim bead and eight dark ventilation recesses add depth to each wheel face.
+      const rimBead=BABYLON.MeshBuilder.CreateTorus("wheel rim outer bead",{diameter:.57,thickness:.028,tessellation:32},scene);
+      rimBead.parent=bus;rimBead.rotation.y=Math.PI/2;rimBead.position.set(x*1.045,.7,z);rimBead.material=chrome;
+      const innerBead=BABYLON.MeshBuilder.CreateTorus("wheel rim inner bead",{diameter:.39,thickness:.022,tessellation:32},scene);
+      innerBead.parent=bus;innerBead.rotation.y=Math.PI/2;innerBead.position.set(x*1.05,.7,z);innerBead.material=chrome;
+      for(let vent=0;vent<8;vent++){
+        const a=vent*Math.PI/4;
+        const recess=BABYLON.MeshBuilder.CreateCylinder("wheel rim ventilation recess",{diameter:.075,height:.385,tessellation:16},scene);
+        recess.parent=bus;recess.rotation.z=Math.PI/2;
+        recess.position.set(x*1.04,.7+Math.sin(a)*.205,z+Math.cos(a)*.205);
+        recess.material=black;
+      }
       const cap=BABYLON.MeshBuilder.CreateCylinder("wheel hub cap",{diameter:.22,height:.38,tessellation:24},scene);
       // Six small wheel nuts give the steel hub a more finished mechanical appearance.
       for(let n=0;n<6;n++){
