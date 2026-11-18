@@ -24,61 +24,84 @@
     const o=BABYLON.MeshBuilder.CreateBox(name,{width:w,height:h,depth:d},scene);
     o.parent=parent;o.position.set(x,y,z);o.material=m;return o;
   };
-  // Full-length, high-floor Venad-style body. Front is +Z.
-  box("main white body",2.58,2.72,10.8,0,2.02,0,white);
-  box("blue lower skirt",2.62,.48,10.84,0,.82,0,blue);
-  box("blue front lower fascia",2.6,.5,.12,0,.83,5.43,blue);
-  box("blue rear lower fascia",2.6,.5,.12,0,.83,-5.43,blue);
-  box("roof cap",2.58,.12,10.72,0,3.43,0,white);
-  // Front one-piece windscreen with slim black rubber surround.
-  box("front windscreen surround",2.34,1.36,.095,0,2.82,5.47,black);
-  box("single-piece front windshield",2.23,1.25,.045,0,2.84,5.535,glassFront);
-  box("front windscreen lower seal",2.28,.055,.07,0,2.16,5.55,black);
+  // Full-length Venad high-floor body. Front is +Z.
+  box("main ivory body shell",2.58,2.66,10.8,0,2.03,0,white);
+  box("continuous sky-blue lower band",2.62,.38,10.84,0,.82,0,blue);
+  box("front blue bumper fascia",2.62,.34,.16,0,.79,5.43,blue);
+  box("rear blue bumper fascia",2.62,.34,.16,0,.79,-5.43,blue);
+  box("roof crown",2.58,.14,10.72,0,3.43,0,white);
+  for(const side of [-1,1]){
+    box("roof edge rain gutter",.045,.045,10.5,side*1.285,3.34,0,chrome);
+    box("thin blue side waist stripe",.035,.095,10.55,side*1.305,1.72,0,blueDark);
+  }
+  // Wide single-piece Venad windscreen, slightly reclined like the reference.
+  const screenFrame=box("single windscreen rubber surround",2.34,1.39,.095,0,2.82,5.47,black);
+  screenFrame.rotation.x=-.07;
+  const windscreen=box("single-piece panoramic windshield",2.23,1.27,.045,0,2.84,5.535,glassFront);
+  windscreen.rotation.x=-.07;
+  box("windscreen lower rubber seal",2.28,.055,.07,0,2.16,5.55,black);
+  const frontTextTex=new BABYLON.DynamicTexture("KSRTC windshield lettering",{width:1024,height:256},scene,false);
+  const frontTextCtx=frontTextTex.getContext();
+  frontTextCtx.clearRect(0,0,1024,256);
+  frontTextCtx.fillStyle="#e9f2f4";frontTextCtx.fillRect(0,0,1024,256);
+  frontTextCtx.font="bold 112px Arial";frontTextCtx.fillStyle="#1676b5";frontTextCtx.fillText("KSRTC",38,145);
+  frontTextCtx.font="bold 48px Arial";frontTextCtx.fillStyle="#9b3c42";frontTextCtx.fillText("VENAD",700,140);
+  frontTextTex.update();
+  const frontTextMat=new BABYLON.StandardMaterial("windshield lettering material",scene);
+  frontTextMat.diffuseTexture=frontTextTex;frontTextMat.emissiveColor=new BABYLON.Color3(.18,.18,.18);frontTextMat.backFaceCulling=false;
+  box("KSRTC windshield lettering panel",1.94,.34,.025,0,3.28,5.565,frontTextMat);
   // Rear glass and rear destination/route panel.
   box("rear window surround",2.12,1.02,.08,0,2.83,-5.47,black);
   box("rear window",2.02,.91,.04,0,2.83,-5.525,glass);
   box("rear route panel",1.45,.25,.07,0,3.39,-5.49,board);
-  // Front destination header, KSRTC lettering panel and authentic-looking grille.
-  box("front destination board",1.95,.25,.08,0,3.39,5.49,board);
-  box("front KSRTC blue panel",1.95,.34,.07,0,3.19,5.52,blue);
-  box("front grille backing",1.04,.64,.10,0,1.62,5.51,black);
-  for(let i=0;i<7;i++)box("horizontal grille louvre "+i,1.0,.045,.045,0,1.38+i*.08,5.58,chrome);
-  box("grille centre badge",.22,.22,.07,0,1.62,5.63,hub);
-  box("ASHOK LEYLAND nameplate",.9,.13,.05,0,2.02,5.58,black);
-  box("front registration plate",.78,.22,.07,0,.98,5.58,mat("Yellow registration plate","#e8c33c"));
-  // Twin round headlamps, indicators and bumper.
-  for(const x of [-.96,.96]){
-    const head=BABYLON.MeshBuilder.CreateCylinder("round headlamp bezel",{diameter:.43,height:.09,tessellation:32},scene);
-    head.parent=bus;head.rotation.x=Math.PI/2;head.position.set(x,1.42,5.55);head.material=black;
+  // Traditional squared front face with broad ribbed Leyland grille.
+  box("front destination display recess",1.68,.22,.055,0,3.38,5.49,black);
+  box("front grille outer surround",1.18,.72,.09,0,1.64,5.52,chrome);
+  box("front grille dark inset",1.08,.62,.045,0,1.64,5.575,black);
+  for(let i=0;i<8;i++)box("horizontal grille rib "+i,1.02,.042,.035,0,1.37+i*.077,5.61,chrome);
+  box("grille centre emblem mount",.22,.22,.055,0,1.64,5.64,hub);
+  const badgeTex=new BABYLON.DynamicTexture("Ashok Leyland nameplate texture",{width:512,height:128},scene,false);
+  const badgeCtx=badgeTex.getContext();
+  badgeCtx.fillStyle="#e8e9e5";badgeCtx.fillRect(0,0,512,128);
+  badgeCtx.fillStyle="#17252a";badgeCtx.font="bold 54px Arial";badgeCtx.textAlign="center";badgeCtx.fillText("ASHOK LEYLAND",256,84);badgeTex.update();
+  const badgeMat=new BABYLON.StandardMaterial("Ashok Leyland nameplate material",scene);
+  badgeMat.diffuseTexture=badgeTex;badgeMat.emissiveColor=new BABYLON.Color3(.12,.12,.12);
+  box("ASHOK LEYLAND nameplate",1.18,.2,.035,0,2.08,5.585,badgeMat);
+  box("front registration plate",.78,.2,.06,0,.98,5.58,mat("Yellow registration plate","#e8c33c"));
+  // Two round lamps set into the lower front corners, as in the supplied photo.
+  for(const x of [-.99,.99]){
+    const bezel=BABYLON.MeshBuilder.CreateCylinder("round headlamp black bezel",{diameter:.43,height:.09,tessellation:32},scene);
+    bezel.parent=bus;bezel.rotation.x=Math.PI/2;bezel.position.set(x,1.42,5.55);bezel.material=black;
     const lens=BABYLON.MeshBuilder.CreateCylinder("round headlamp lens",{diameter:.32,height:.095,tessellation:32},scene);
     lens.parent=bus;lens.rotation.x=Math.PI/2;lens.position.set(x,1.42,5.61);lens.material=lamp;
-    box("front amber indicator",.2,.16,.07,x*1.12,1.42,5.57,amber);
+    const indicator=box("small amber indicator",.19,.14,.07,x*1.12,1.17,5.57,amber);
   }
-  box("front bumper",2.65,.27,.22,0,.64,5.52,blueDark);
-  box("bumper silver edge",2.56,.055,.035,0,.51,5.65,chrome);
-  // This Venad reference has ONE front wiper on the driver's side.
-  // A slim pivot arm and long blade sit on the lower portion of the one-piece glass.
-  const wiperPivot=BABYLON.MeshBuilder.CreateCylinder("single driver-side wiper pivot",{diameter:.105,height:.055,tessellation:20},scene);
+  box("full-width blue front bumper",2.65,.27,.22,0,.64,5.52,blueDark);
+  box("bumper narrow silver edge",2.56,.045,.035,0,.50,5.65,chrome);
+  // One driver's-side wiper only, mounted at the bottom of the windscreen.
+  const wiperPivot=BABYLON.MeshBuilder.CreateCylinder("single driver wiper pivot",{diameter:.09,height:.05,tessellation:20},scene);
   wiperPivot.parent=bus;wiperPivot.rotation.x=Math.PI/2;
-  wiperPivot.position.set(-.48,2.22,5.59);wiperPivot.material=black;
-  const wiperArm=box("single windscreen wiper arm",.045,.56,.035,-.48,2.49,5.60,black);
-  wiperArm.rotation.z=-.28;
-  const wiperBlade=box("single windscreen wiper blade",.045,.72,.035,-.48,2.53,5.615,black);
-  wiperBlade.rotation.z=-.28;
-  // Side windows: long dark glazing, black dividers and lower body stripe.
+  wiperPivot.position.set(-.47,2.23,5.59);wiperPivot.material=black;
+  const wiperArm=box("single angled wiper arm",.035,.48,.03,-.39,2.43,5.60,black);
+  wiperArm.rotation.z=-.48;
+  const wiperBlade=box("single wiper blade",.035,.68,.035,-.22,2.58,5.615,black);
+  wiperBlade.rotation.z=-.48;
+  // Tall rectangular passenger windows with dark rubber surrounds and curtains.
   for(const side of [-1,1]){
-    box("long blue side belt",.045,.13,10.45,side*1.305,1.72,0,blueDark);
-    for(let i=0;i<8;i++){
-      const z=4.55-i*1.18;
-      box("side window rubber frame",.065,1.17,1.06,side*1.315,2.78,z,black);
-      box("dark passenger window",.035,1.08,.98,side*1.355,2.79,z,glass);
-      box("window vertical divider",.045,1.08,.045,side*1.38,2.79,z,chrome);
+    for(let i=0;i<7;i++){
+      const z=4.25-i*1.35;
+      box("side window black rubber surround",.065,1.16,1.20,side*1.315,2.78,z,black);
+      box("side passenger glazing",.035,1.07,1.11,side*1.355,2.79,z,glass);
+      box("side window centre divider",.04,1.08,.035,side*1.38,2.79,z,black);
+      for(const curtainZ of [z-.48,z+.48]){
+        box("interior window curtain",.025,.96,.045,side*1.325,2.79,curtainZ,seat);
+      }
     }
-    box("side window lower rail",.06,.065,9.7,side*1.34,2.18,0,black);
-    // Side mirrors and arms.
-    const arm=box("mirror support arm",.065,.07,.9,side*1.49,3.04,4.62,black);arm.rotation.y=side*.22;
-    box("mirror housing",.16,.42,.25,side*1.67,3.14,4.2,black);
-    box("mirror reflective glass",.035,.33,.19,side*1.765,3.14,4.2,glassFront);
+    box("side window lower rubber rail",.055,.065,9.65,side*1.34,2.18,0,black);
+    box("side blue belt stripe",.04,.105,10.5,side*1.35,1.72,0,blueDark);
+    const mirrorArm=box("front mirror support arm",.065,.07,.9,side*1.49,3.04,4.62,black);mirrorArm.rotation.y=side*.22;
+    box("large rectangular side mirror housing",.16,.42,.25,side*1.67,3.14,4.2,black);
+    box("side mirror glass",.035,.33,.19,side*1.765,3.14,4.2,glassFront);
   }
   // Two passenger doors, reflecting the two-door Venad layout.
   for(const [idx,z] of [[0,3.05],[1,-3.72]]){
@@ -91,12 +114,7 @@
     // Visible low entry step.
     box("entry step "+idx,.68,.12,.94,side*1.05,.46,z,chrome);
   }
-  // Luggage/service hatches on the opposite side.
-  for(let i=0;i<4;i++){
-    const z=3.15-i*2.05;
-    box("lower service hatch "+i,.045,.43,1.7,1.315,1.12,z,blueDark);
-    box("service hatch seam "+i,.035,.025,1.58,1.345,1.34,z,chrome);
-  }
+  // Plain lower side panels: this older high-floor Venad body has no modern coach luggage doors.
   // Wheel arches are upper semicircular mouldings, not full rings.
   const wheels=[];
   for(const side of [-1,1]){
