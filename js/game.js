@@ -40,26 +40,34 @@
   const windscreen=box("single-piece panoramic windshield",2.23,1.27,.045,0,2.84,5.535,glassFront);
   windscreen.rotation.x=-.07;
   box("windscreen lower rubber seal",2.28,.055,.07,0,2.16,5.55,black);
-  const frontTextTex=new BABYLON.DynamicTexture("KSRTC windshield lettering",{width:1024,height:256},scene,false);
-  const frontTextCtx=frontTextTex.getContext();
-  frontTextCtx.clearRect(0,0,1024,256);
-  frontTextCtx.fillStyle="#e9f2f4";frontTextCtx.fillRect(0,0,1024,256);
-  frontTextCtx.font="bold 112px Arial";frontTextCtx.fillStyle="#1676b5";frontTextCtx.fillText("KSRTC",38,145);
-  frontTextCtx.font="bold 48px Arial";frontTextCtx.fillStyle="#9b3c42";frontTextCtx.fillText("VENAD",700,140);
-  frontTextTex.update();
-  const frontTextMat=new BABYLON.StandardMaterial("windshield lettering material",scene);
-  frontTextMat.diffuseTexture=frontTextTex;frontTextMat.emissiveColor=new BABYLON.Color3(.18,.18,.18);frontTextMat.backFaceCulling=false;
-  box("KSRTC windshield lettering panel",1.94,.34,.025,0,3.28,5.565,frontTextMat);
+  // Separate upper-windscreen stickers, matching the reference photograph.
+  const ksrtcStickerTex=new BABYLON.DynamicTexture("KSRTC upper windscreen sticker",{width:512,height:160},scene,false);
+  const ks=ksrtcStickerTex.getContext();ks.fillStyle="#e9f2f4";ks.fillRect(0,0,512,160);
+  ks.fillStyle="#1676b5";ks.font="bold 104px Arial";ks.textAlign="center";ks.fillText("KSRTC",256,116);ksrtcStickerTex.update();
+  const ksrtcStickerMat=new BABYLON.StandardMaterial("KSRTC sticker material",scene);
+  ksrtcStickerMat.diffuseTexture=ksrtcStickerTex;ksrtcStickerMat.emissiveColor=new BABYLON.Color3(.12,.12,.12);ksrtcStickerMat.backFaceCulling=false;
+  const ksrtcSticker=BABYLON.MeshBuilder.CreatePlane("KSRTC upper-left glass sticker",{width:1.05,height:.32,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+  ksrtcSticker.parent=bus;ksrtcSticker.position.set(-.58,3.29,5.575);ksrtcSticker.material=ksrtcStickerMat;
+  const destination=box("upper-right destination display",.92,.22,.035,.60,3.30,5.575,board);
+  const destinationTex=new BABYLON.DynamicTexture("destination display lettering",{width:512,height:128},scene,false);
+  const dc=destinationTex.getContext();dc.fillStyle="#17252a";dc.fillRect(0,0,512,128);
+  dc.fillStyle="#d8e0dc";dc.font="bold 42px Arial";dc.textAlign="center";dc.fillText("THRISSUR",256,82);destinationTex.update();
+  const destinationMat=new BABYLON.StandardMaterial("destination lettering material",scene);
+  destinationMat.diffuseTexture=destinationTex;destinationMat.emissiveColor=new BABYLON.Color3(.08,.08,.08);destinationMat.backFaceCulling=false;
+  const destinationText=BABYLON.MeshBuilder.CreatePlane("destination text on glass",{width:.84,height:.17,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+  destinationText.parent=bus;destinationText.position.set(.60,3.30,5.60);destinationText.material=destinationMat;
   // Rear glass and rear destination/route panel.
   box("rear window surround",2.12,1.02,.08,0,2.83,-5.47,black);
   box("rear window",2.02,.91,.04,0,2.83,-5.525,glass);
   box("rear route panel",1.45,.25,.07,0,3.39,-5.49,board);
   // Traditional squared front face with broad ribbed Leyland grille.
   box("front destination display recess",1.68,.22,.055,0,3.38,5.49,black);
-  box("front grille outer surround",1.18,.72,.09,0,1.64,5.52,chrome);
-  box("front grille dark inset",1.08,.62,.045,0,1.64,5.575,black);
-  for(let i=0;i<8;i++)box("horizontal grille rib "+i,1.02,.042,.035,0,1.37+i*.077,5.61,chrome);
-  box("grille centre emblem mount",.22,.22,.055,0,1.64,5.64,hub);
+  // Broad tapered grille: shorter upper/lower slats and a wider centre, as in the photo.
+  box("front grille outer surround",1.28,.76,.09,0,1.64,5.52,chrome);
+  box("front grille dark inset",1.19,.68,.045,0,1.64,5.575,black);
+  const grilleWidths=[.72,.88,1.02,1.12,1.12,1.02,.88,.72];
+  for(let i=0;i<8;i++)box("tapered horizontal grille rib "+i,grilleWidths[i],.043,.04,0,1.35+i*.083,5.61,chrome);
+  box("grille centre emblem mount",.24,.22,.06,0,1.64,5.645,hub);
   const badgeTex=new BABYLON.DynamicTexture("Ashok Leyland nameplate texture",{width:512,height:128},scene,false);
   const badgeCtx=badgeTex.getContext();
   badgeCtx.fillStyle="#e8e9e5";badgeCtx.fillRect(0,0,512,128);
@@ -80,15 +88,14 @@
   }
   box("full-width blue front bumper",2.65,.27,.22,0,.64,5.52,blueDark);
   box("bumper narrow silver edge",2.56,.045,.035,0,.50,5.65,chrome);
-  // Single driver's-side wiper: pivot and motor sit at the LOWER edge of the windscreen.
-  // The short arm rises from the bottom pivot; the blade lies across the lower glass.
-  const wiperPivot=BABYLON.MeshBuilder.CreateCylinder("single driver-side wiper lower pivot",{diameter:.085,height:.055,tessellation:24},scene);
+  // ONE driver's-side wiper, mounted at the upper windscreen edge.
+  const wiperPivot=BABYLON.MeshBuilder.CreateCylinder("single upper driver-side wiper pivot",{diameter:.085,height:.055,tessellation:24},scene);
   wiperPivot.parent=bus;wiperPivot.rotation.x=Math.PI/2;
-  wiperPivot.position.set(.58,2.235,5.602);wiperPivot.material=black;
-  const wiperArm=box("single windscreen wiper arm",.045,.48,.035,.43,2.445,5.635,black);
-  wiperArm.rotation.z=-.48;
-  const wiperBlade=box("single windscreen wiper blade",.72,.035,.04,.18,2.665,5.65,black);
-  wiperBlade.rotation.z=-.12;
+  wiperPivot.position.set(-.48,3.445,5.602);wiperPivot.material=black;
+  const wiperArm=box("single upper-mounted windscreen wiper arm",.045,.88,.035,-.43,2.99,5.635,black);
+  wiperArm.rotation.z=.12;
+  const wiperBlade=box("single windscreen wiper blade",.62,.035,.04,-.56,2.58,5.65,black);
+  wiperBlade.rotation.z=-.30;
   // Tall rectangular passenger windows with dark rubber surrounds and curtains.
   for(const side of [-1,1]){
     for(let i=0;i<7;i++){
@@ -177,13 +184,13 @@
   // Small livery details and visible text decals are represented as simple raised panels.
   box("VENAD lettering plate",.78,.18,.045,0,2.18,5.57,white);
   // Keep the front lettering clear of the windscreen and destination display.
-  const ksrtcFrontTex=new BABYLON.DynamicTexture("upright front KSRTC lettering",{width:512,height:96},scene,false);
-  const kctx=ksrtcFrontTex.getContext();kctx.clearRect(0,0,512,96);
-  kctx.fillStyle="#1676b5";kctx.font="bold 68px Arial";kctx.textAlign="center";kctx.fillText("KSRTC",256,72);ksrtcFrontTex.update();
-  const ksrtcFrontMat=new BABYLON.StandardMaterial("front KSRTC lettering material",scene);
-  ksrtcFrontMat.diffuseTexture=ksrtcFrontTex;ksrtcFrontMat.emissiveColor=new BABYLON.Color3(.18,.18,.18);ksrtcFrontMat.backFaceCulling=false;
-  const ksrtcFront=BABYLON.MeshBuilder.CreatePlane("front KSRTC upright lettering",{width:1.15,height:.22,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
-  ksrtcFront.parent=bus;ksrtcFront.position.set(0,3.20,5.59);ksrtcFront.material=ksrtcFrontMat;
+  // Fleet number on the front-left body panel (not repeated across the glass).
+  const fleetTex=new BABYLON.DynamicTexture("front fleet number texture",{width:384,height:128},scene,false);
+  const ft=fleetTex.getContext();ft.clearRect(0,0,384,128);ft.fillStyle="#a63848";ft.font="bold 76px Arial";ft.textAlign="center";ft.fillText("EAC 934",192,88);fleetTex.update();
+  const fleetMat=new BABYLON.StandardMaterial("front fleet number material",scene);
+  fleetMat.diffuseTexture=fleetTex;fleetMat.emissiveColor=new BABYLON.Color3(.12,.04,.04);fleetMat.backFaceCulling=false;
+  const fleetNo=BABYLON.MeshBuilder.CreatePlane("front fleet number",{width:.72,height:.24,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+  fleetNo.parent=bus;fleetNo.position.set(-.93,2.02,5.59);fleetNo.material=fleetMat;
   // Small side route/branding panels.
   for(const side of [-1,1]){
     box("side VENAD branding panel",.035,.42,1.12,side*1.39,1.98,-.15,blueDark);
