@@ -62,8 +62,25 @@
   box("main ivory body shell",2.58,2.66,10.8,0,2.03,0,white);
   box("continuous sky-blue lower band",2.62,.38,10.84,0,.82,0,blue);
   box("front blue bumper fascia",2.62,.34,.16,0,.79,5.43,blue);
+  for(const x of [-1.18,1.18]){
+    const bumperEnd=BABYLON.MeshBuilder.CreateCylinder("rounded blue bumper end",{height:.24,diameter:.34,tessellation:20},scene);
+    bumperEnd.parent=bus;bumperEnd.rotation.z=Math.PI/2;bumperEnd.position.set(x,.78,5.47);bumperEnd.material=blueDark;
+  }
+
   box("rear blue bumper fascia",2.62,.34,.16,0,.79,-5.43,blue);
   box("roof crown",2.58,.14,10.72,0,3.43,0,white);
+  // Softened coach-body corners and continuous roof edge mouldings.
+  for(const x of [-1.22,1.22]){
+    for(const z of [-5.28,5.28]){
+      const corner=BABYLON.MeshBuilder.CreateCylinder("rounded body corner pillar",{height:2.58,diameter:.24,tessellation:20},scene);
+      corner.parent=bus;corner.position.set(x,2.04,z);corner.material=white;
+    }
+    const roofEdge=BABYLON.MeshBuilder.CreateCylinder("rounded roof edge rail",{height:10.62,diameter:.105,tessellation:16},scene);
+    roofEdge.parent=bus;roofEdge.rotation.x=Math.PI/2;roofEdge.position.set(x,3.37,0);roofEdge.material=white;
+  }
+  box("front roof drip lip",2.48,.075,.16,0,3.48,5.30,white);
+  box("rear roof drip lip",2.48,.075,.16,0,3.48,-5.30,white);
+
   for(const side of [-1,1]){
     box("roof edge rain gutter",.045,.045,10.5,side*1.285,3.34,0,chrome);
     box("thin blue side waist stripe",.035,.095,10.55,side*1.305,1.72,0,blueDark);
@@ -112,6 +129,14 @@
   const badgePlate=BABYLON.MeshBuilder.CreatePlane("ASHOK LEYLAND upright nameplate",{width:1.18,height:.2,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
   badgePlate.parent=bus;badgePlate.position.set(0,2.08,5.625);badgePlate.material=badgeMat;
   box("front registration plate",.78,.2,.06,0,.98,5.58,mat("Yellow registration plate","#e8c33c"));
+  const regTex=new BABYLON.DynamicTexture("Kerala registration lettering",{width:512,height:128},scene,false);
+  const rc=regTex.getContext();rc.fillStyle="#e8c33c";rc.fillRect(0,0,512,128);
+  rc.fillStyle="#18252b";rc.font="bold 76px Arial";rc.textAlign="center";rc.fillText("KL 15 8119",256,88);regTex.update();
+  const regMat=new BABYLON.StandardMaterial("registration lettering material",scene);
+  regMat.diffuseTexture=regTex;regMat.emissiveColor=new BABYLON.Color3(.08,.07,.02);regMat.backFaceCulling=false;
+  const regText=BABYLON.MeshBuilder.CreatePlane("front registration lettering",{width:.73,height:.18,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+  regText.parent=bus;regText.position.set(0,.98,5.62);regText.material=regMat;
+
   // Two round lamps set into the lower front corners, as in the supplied photo.
   for(const x of [-.99,.99]){
     const bezel=BABYLON.MeshBuilder.CreateCylinder("round headlamp black bezel",{diameter:.43,height:.09,tessellation:32},scene);
@@ -216,7 +241,25 @@
   const steering=BABYLON.MeshBuilder.CreateTorus("right-hand-drive steering wheel",{diameter:.48,thickness:.045,tessellation:24},scene);
   steering.parent=interior;steering.position.set(.62,2.18,4.78);steering.rotation.x=Math.PI/2;steering.material=black;
   // Small livery details and visible text decals are represented as simple raised panels.
+  // Refined driver's area: steering column, instrument dials and grab rail.
+  const steeringColumn=BABYLON.MeshBuilder.CreateCylinder("steering column",{height:.42,diameter:.075,tessellation:16},scene);
+  steeringColumn.parent=interior;steeringColumn.position.set(.62,2.05,4.78);steeringColumn.rotation.x=.35;steeringColumn.material=chrome;
+  box("dashboard upper brow",1.25,.09,.32,.62,2.29,4.76,black,interior);
+  for(let i=0;i<3;i++){
+    const gauge=BABYLON.MeshBuilder.CreateCylinder("dashboard gauge "+i,{diameter:.13,height:.025,tessellation:24},scene);
+    gauge.parent=interior;gauge.rotation.x=Math.PI/2;gauge.position.set(.30+i*.30,2.20,4.99);gauge.material=lamp;
+  }
+  const driverGrab=BABYLON.MeshBuilder.CreateCylinder("driver grab rail",{height:1.1,diameter:.035,tessellation:12},scene);
+  driverGrab.parent=interior;driverGrab.position.set(1.02,2.05,4.12);driverGrab.material=chrome;
+
   box("VENAD lettering plate",.78,.18,.045,0,2.18,5.57,white);
+  const venadTex=new BABYLON.DynamicTexture("VENAD red lettering",{width:384,height:96},scene,false);
+  const vc=venadTex.getContext();vc.clearRect(0,0,384,96);vc.fillStyle="#9c3441";vc.font="italic bold 62px Georgia";vc.textAlign="center";vc.fillText("VENAD",192,70);venadTex.update();
+  const venadMat=new BABYLON.StandardMaterial("VENAD lettering material",scene);
+  venadMat.diffuseTexture=venadTex;venadMat.emissiveColor=new BABYLON.Color3(.1,.025,.03);venadMat.backFaceCulling=false;
+  const venadText=BABYLON.MeshBuilder.CreatePlane("VENAD front lettering",{width:.70,height:.16,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+  venadText.parent=bus;venadText.position.set(0,2.18,5.60);venadText.material=venadMat;
+
   // Keep the front lettering clear of the windscreen and destination display.
   // Fleet number on the front-left body panel (not repeated across the glass).
   const fleetTex=new BABYLON.DynamicTexture("front fleet number texture",{width:384,height:128},scene,false);
