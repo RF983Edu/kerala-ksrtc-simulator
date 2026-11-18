@@ -114,6 +114,13 @@
   // Rear glass and rear destination/route panel.
   box("rear window surround",2.12,1.02,.08,0,2.83,-5.47,black);
   box("rear window",2.02,.91,.04,0,2.83,-5.525,glass);
+  // Rear glazing finish: slim rubber bead and subtle horizontal glass divisions.
+  box("rear glass inner rubber bead",1.94,.82,.025,0,2.83,-5.55,black);
+  box("rear glass inset pane",1.86,.74,.018,0,2.83,-5.568,glass);
+  for(let i=0;i<3;i++){
+    box("rear window horizontal divider "+i,1.82,.012,.018,0,2.59+i*.24,-5.585,chrome);
+  }
+
   box("rear route panel",1.45,.25,.07,0,3.39,-5.49,board);
   // Traditional squared front face with broad ribbed Leyland grille.
   box("front destination display recess",1.68,.22,.055,0,3.38,5.49,black);
@@ -253,6 +260,24 @@
     box("rear reverse lamp",.23,.12,.05,x,1.2,-5.57,lamp);
   }
   box("rear bumper",2.55,.22,.2,0,.62,-5.52,blueDark);
+  // Rear lamp bezels, inset lenses and bumper corner caps.
+  for(const x of [-.94,.94]){
+    box("rear lamp outer chrome bezel",.36,.72,.035,x,1.48,-5.57,chrome);
+    box("rear lamp inset surround",.29,.65,.025,x,1.48,-5.60,black);
+    box("rear red lens upper reflector",.24,.075,.035,x,1.82,-5.63,red);
+    box("rear bumper corner cap",.16,.25,.22,x*1.34,.62,-5.52,chrome);
+    box("rear red side reflector",.045,.12,.2,x*1.45,.92,-5.25,red);
+  }
+  box("rear number plate mount",.82,.22,.045,0,.98,-5.58,black);
+  box("rear number plate face",.74,.15,.025,0,.98,-5.61,white);
+  // Small rear engine ventilation slots, kept as physical dark slats rather than text decals.
+  for(let i=0;i<5;i++){
+    box("rear ventilation slot "+i,.72,.035,.025,0,2.04+i*.095,-5.57,black);
+  }
+  box("rear tow hook mount",.28,.12,.18,0,.43,-5.53,chrome);
+  const towHook=BABYLON.MeshBuilder.CreateTorus("rear tow hook",{diameter:.22,thickness:.035,tessellation:20},scene);
+  towHook.parent=bus;towHook.position.set(0,.30,-5.66);towHook.rotation.x=Math.PI/2;towHook.material=chrome;
+
   // Interior visible through side windows: floor, aisle, paired passenger seats and rails.
   const interior=new BABYLON.TransformNode("bus interior",scene);interior.parent=bus;
   box("interior floor",2.22,.12,9.95,0,1.02,0,floorMat,interior);
