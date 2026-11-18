@@ -65,6 +65,7 @@
   badgeCtx.fillStyle="#e8e9e5";badgeCtx.fillRect(0,0,512,128);
   badgeCtx.fillStyle="#17252a";badgeCtx.font="bold 54px Arial";badgeCtx.textAlign="center";badgeCtx.fillText("ASHOK LEYLAND",256,84);badgeTex.update();
   const badgeMat=new BABYLON.StandardMaterial("Ashok Leyland nameplate material",scene);
+  badgeTex.vScale=-1;badgeTex.vOffset=1;
   badgeMat.diffuseTexture=badgeTex;badgeMat.emissiveColor=new BABYLON.Color3(.12,.12,.12);
   box("ASHOK LEYLAND nameplate",1.18,.2,.035,0,2.08,5.585,badgeMat);
   box("front registration plate",.78,.2,.06,0,.98,5.58,mat("Yellow registration plate","#e8c33c"));
@@ -78,14 +79,14 @@
   }
   box("full-width blue front bumper",2.65,.27,.22,0,.64,5.52,blueDark);
   box("bumper narrow silver edge",2.56,.045,.035,0,.50,5.65,chrome);
-  // One driver's-side wiper only, mounted at the bottom of the windscreen.
-  const wiperPivot=BABYLON.MeshBuilder.CreateCylinder("single driver wiper pivot",{diameter:.09,height:.05,tessellation:20},scene);
+  // One driver's-side wiper only. Pivot at lower glass edge, blade angled upward.
+  const wiperPivot=BABYLON.MeshBuilder.CreateCylinder("single driver-side wiper pivot",{diameter:.075,height:.045,tessellation:20},scene);
   wiperPivot.parent=bus;wiperPivot.rotation.x=Math.PI/2;
-  wiperPivot.position.set(-.47,2.23,5.59);wiperPivot.material=black;
-  const wiperArm=box("single angled wiper arm",.035,.48,.03,-.39,2.43,5.60,black);
-  wiperArm.rotation.z=-.48;
-  const wiperBlade=box("single wiper blade",.035,.68,.035,-.22,2.58,5.615,black);
-  wiperBlade.rotation.z=-.48;
+  wiperPivot.position.set(.43,2.23,5.585);wiperPivot.material=black;
+  const wiperArm=box("single windscreen wiper arm",.035,.53,.028,.32,2.43,5.61,black);
+  wiperArm.rotation.z=.42;
+  const wiperBlade=box("single windscreen wiper blade",.045,.78,.035,.12,2.58,5.625,black);
+  wiperBlade.rotation.z=.42;
   // Tall rectangular passenger windows with dark rubber surrounds and curtains.
   for(const side of [-1,1]){
     for(let i=0;i<7;i++){
@@ -150,8 +151,9 @@
   const interior=new BABYLON.TransformNode("bus interior",scene);interior.parent=bus;
   box("interior floor",2.22,.12,9.95,0,1.02,0,floorMat,interior);
   box("front driver partition",2.1,1.5,.08,0,2.0,4.48,black,interior);
-  box("driver seat base",.62,.25,.62,-.62,1.5,4.05,seat,interior);
-  box("driver seat back",.62,.9,.2,-.62,2.02,4.28,seat,interior);
+  // Right-hand-drive cockpit: driver position is on the bus's right side.
+  box("driver seat base",.62,.25,.62,.62,1.5,4.05,seat,interior);
+  box("driver seat back",.62,.9,.2,.62,2.02,4.28,seat,interior);
   for(let row=0;row<10;row++){
     const z=3.25-row*.83;
     for(const x of [-.66,.66]){
@@ -167,9 +169,9 @@
   }
   // Cockpit details.
   box("dashboard",1.65,.2,.62,0,2.03,4.7,black,interior);
-  box("instrument cluster",.62,.16,.06,0,2.18,4.98,chrome,interior);
-  const steering=BABYLON.MeshBuilder.CreateTorus("steering wheel",{diameter:.48,thickness:.045,tessellation:24},scene);
-  steering.parent=interior;steering.position.set(-.62,2.18,4.78);steering.rotation.x=Math.PI/2;steering.material=black;
+  box("driver instrument cluster",.62,.16,.06,.62,2.18,4.98,chrome,interior);
+  const steering=BABYLON.MeshBuilder.CreateTorus("right-hand-drive steering wheel",{diameter:.48,thickness:.045,tessellation:24},scene);
+  steering.parent=interior;steering.position.set(.62,2.18,4.78);steering.rotation.x=Math.PI/2;steering.material=black;
   // Small livery details and visible text decals are represented as simple raised panels.
   box("VENAD lettering plate",.78,.18,.045,0,2.18,5.57,white);
   box("KSRTC front lettering strip",1.75,.22,.035,0,3.19,5.58,blue);
@@ -187,7 +189,7 @@
   smoothCamera.minZ=.1;
   const freeCamera=new BABYLON.ArcRotateCamera("free camera",Math.PI/2,1.12,22,new BABYLON.Vector3(0,2,0),scene);
   freeCamera.lowerRadiusLimit=7;freeCamera.upperRadiusLimit=65;freeCamera.wheelPrecision=35;freeCamera.panningSensibility=70;
-  const cockpit=new BABYLON.UniversalCamera("cockpit",new BABYLON.Vector3(0,2.65,4.2),scene);
+  const cockpit=new BABYLON.UniversalCamera("cockpit",new BABYLON.Vector3(.62,2.65,4.2),scene);
   cockpit.parent=bus;cockpit.minZ=.1;
   const cameraModes=[{name:"Fixed chase",camera:fixedCamera},{name:"Smooth follow",camera:smoothCamera},{name:"Free camera",camera:freeCamera},{name:"Cockpit",camera:cockpit}];
   let cameraIndex=0;
