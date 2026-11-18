@@ -30,11 +30,12 @@
   const ground=BABYLON.MeshBuilder.CreateGround("green landscape",{width:180,height:500},scene);ground.position.z=100;ground.material=grass;
   ground.receiveShadows=true;
   const shoulderMat=mat("Road shoulder gravel","#77796f");
+  const shoulderEdgeMat=mat("Road edge paint","#e9dfb7");
   for(const side of [-1,1]){
     const shoulder=BABYLON.MeshBuilder.CreateBox("road shoulder",{width:1.25,height:.08,depth:500},scene);
     shoulder.position.set(side*6.55,.015,100);shoulder.material=shoulderMat;
     const edge=BABYLON.MeshBuilder.CreateBox("road edge line",{width:.12,height:.025,depth:500},scene);
-    edge.position.set(side*5.82,.095,100);edge.material=lineMat;
+    edge.position.set(side*5.82,.095,100);edge.material=shoulderEdgeMat;
   }
   // Layered roadside trees create a Kerala roadside silhouette without distracting from the bus.
   const trunkMat=mat("Tree trunks","#554538"),leafMats=[mat("Foliage deep green","#244b35"),mat("Foliage mid green","#356747"),mat("Foliage light green","#557c4b")];
