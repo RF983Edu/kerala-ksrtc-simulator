@@ -393,6 +393,28 @@
   // Interior visible through side windows: floor, aisle, paired passenger seats and rails.
   const interior=new BABYLON.TransformNode("bus interior",scene);interior.parent=bus;
   box("interior floor",2.22,.12,9.95,0,1.02,0,floorMat,interior);
+  // Gently crowned ceiling panel follows the roof instead of using a flat box.
+  const ceilingPaths=[];
+  for(let row=0;row<=24;row++){
+    const z=4.92-row*(9.84/24),path=[];
+    for(let col=0;col<=12;col++){
+      const x=-1.12+col*(2.24/12);
+      const crown=.075*(1-Math.pow(x/1.12,2));
+      path.push(new BABYLON.Vector3(x,3.27+crown,z));
+    }
+    ceilingPaths.push(path);
+  }
+  const ceiling=BABYLON.MeshBuilder.CreateRibbon("gently crowned passenger ceiling",{pathArray:ceilingPaths,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+  ceiling.parent=interior;ceiling.material=white;
+  // Longitudinal overhead grab rails with short hanging supports.
+  for(const x of [-.78,.78]){
+    const rail=BABYLON.MeshBuilder.CreateCylinder("longitudinal overhead grab rail",{height:9.25,diameter:.045,tessellation:16},scene);
+    rail.parent=interior;rail.rotation.x=Math.PI/2;rail.position.set(x,2.98,-.02);rail.material=chrome;
+    for(let z=3.8;z>=-4.0;z-=1.3){
+      const hanger=BABYLON.MeshBuilder.CreateCylinder("overhead rail hanger",{height:.24,diameter:.025,tessellation:12},scene);
+      hanger.parent=interior;hanger.position.set(x,3.105,z);hanger.material=chrome;
+    }
+  }
   box("front driver partition",2.1,1.5,.08,0,2.0,4.48,black,interior);
   // Right-hand-drive cockpit: driver position is on the bus's right side.
   box("driver seat base",.62,.25,.62,.62,1.5,4.05,seat,interior);
