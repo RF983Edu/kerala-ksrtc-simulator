@@ -88,11 +88,29 @@
     box("thin blue side waist stripe",.035,.095,10.55,side*1.305,1.72,0,blueDark);
   }
   // Wide single-piece Venad windscreen, slightly reclined like the reference.
-  const screenFrame=box("single windscreen rubber surround",2.34,1.39,.095,0,2.82,5.47,black);
-  screenFrame.rotation.x=-.07;
-  const windscreen=box("single-piece panoramic windshield",2.23,1.27,.045,0,2.84,5.535,glassFront);
-  windscreen.rotation.x=-.07;
-  box("windscreen lower rubber seal",2.28,.055,.07,0,2.16,5.55,black);
+  // Gently bowed panoramic windscreen built as a curved surface, not a flat box.
+  const windscreenPaths=[];
+  for(let row=0;row<=8;row++){
+    const y=2.20+row*(1.28/8),path=[];
+    for(let col=0;col<=16;col++){
+      const u=col/16,x=-1.115+u*2.23;
+      const bow=.105*(1-Math.pow((x/1.115),2));
+      path.push(new BABYLON.Vector3(x,y,5.505+bow));
+    }
+    windscreenPaths.push(path);
+  }
+  const windscreen=BABYLON.MeshBuilder.CreateRibbon("curved single-piece panoramic windshield",{pathArray:windscreenPaths,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+  windscreen.parent=bus;windscreen.material=glassFront;
+  const screenTopPath=[],screenBottomPath=[];
+  for(let i=0;i<=24;i++){
+    const x=-1.17+i*(2.34/24),bow=.105*(1-Math.pow(x/1.17,2));
+    screenTopPath.push(new BABYLON.Vector3(x,3.49,5.49+bow));
+    screenBottomPath.push(new BABYLON.Vector3(x,2.17,5.49+bow));
+  }
+  for(const [name,path] of [["windscreen curved upper rubber seal",screenTopPath],["windscreen curved lower rubber seal",screenBottomPath]]){
+    const trim=BABYLON.MeshBuilder.CreateTube(name,{path,radius:.035,tessellation:10},scene);
+    trim.parent=bus;trim.material=black;
+  }
   // Separate upper-windscreen stickers, matching the reference photograph.
   const ksrtcStickerTex=new BABYLON.DynamicTexture("KSRTC upper windscreen sticker",{width:512,height:160},scene,false);
   const ks=ksrtcStickerTex.getContext();ks.fillStyle="#e9f2f4";ks.fillRect(0,0,512,160);
@@ -365,9 +383,15 @@
   for(let row=0;row<10;row++){
     const z=3.25-row*.83;
     for(const x of [-.66,.66]){
-      box("passenger seat cushion",.55,.18,.55,x,1.43,z,seat,interior);
-      box("passenger seat back",.55,.72,.16,x,1.83,z-.2,seat,interior);
-      box("seat support",.07,.38,.07,x,1.2,z,chrome,interior);
+      // Soft, rounded seat cushions and gently reclined padded backs.
+      const cushion=BABYLON.MeshBuilder.CreateSphere("rounded passenger seat cushion",{diameter:1,segments:20},scene);
+      cushion.parent=interior;cushion.scaling.set(.29,.105,.31);cushion.position.set(x,1.46,z);cushion.material=seat;
+      const back=BABYLON.MeshBuilder.CreateSphere("sculpted passenger seat backrest",{diameter:1,segments:20},scene);
+      back.parent=interior;back.scaling.set(.29,.39,.105);back.position.set(x,1.82,z-.205);back.rotation.x=-.10;back.material=seat;
+      const headPad=BABYLON.MeshBuilder.CreateSphere("upper seat back padded crown",{diameter:1,segments:16},scene);
+      headPad.parent=interior;headPad.scaling.set(.255,.105,.085);headPad.position.set(x,2.13,z-.20);headPad.material=seat;
+      const support=BABYLON.MeshBuilder.CreateCylinder("seat pedestal support",{height:.36,diameter:.055,tessellation:16},scene);
+      support.parent=interior;support.position.set(x,1.23,z);support.material=chrome;
     }
   }
   for(let i=0;i<7;i++){
