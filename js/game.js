@@ -147,17 +147,19 @@
   box("rear route panel",1.45,.25,.07,0,3.39,-5.49,board);
   // Traditional squared front face with broad ribbed Leyland grille.
   box("front destination display recess",1.68,.22,.055,0,3.38,5.49,black);
-  // Prominent KSRTC fleet board mounted in the front upper fascia.
-  const frontKsrtcTex=new BABYLON.DynamicTexture("front KSRTC board lettering",{width:768,height:128},scene,false);
+  // Raised, clearly visible KSRTC front board mounted ahead of the windscreen.
+  const frontKsrtcBacking=box("raised front KSRTC board backing",1.86,.34,.10,0,3.39,5.60,blueDark);
+  const frontKsrtcFace=box("front KSRTC board face",1.76,.27,.018,0,3.39,5.66,board);
+  const frontKsrtcTex=new BABYLON.DynamicTexture("front KSRTC board lettering",{width:768,height:160},scene,false);
   const fkc=frontKsrtcTex.getContext();
-  fkc.fillStyle="#17252a";fkc.fillRect(0,0,768,128);
-  fkc.strokeStyle="#d8e0dc";fkc.lineWidth=8;fkc.strokeRect(5,5,758,118);
-  fkc.fillStyle="#f4f2e8";fkc.font="bold 88px Arial";fkc.textAlign="center";fkc.textBaseline="middle";fkc.fillText("KSRTC",384,66);
+  fkc.fillStyle="#17252a";fkc.fillRect(0,0,768,160);
+  fkc.strokeStyle="#e7eceb";fkc.lineWidth=9;fkc.strokeRect(5,5,758,150);
+  fkc.fillStyle="#ffffff";fkc.font="bold 112px Arial";fkc.textAlign="center";fkc.textBaseline="middle";fkc.fillText("KSRTC",384,82);
   frontKsrtcTex.update();makeTextReadable(frontKsrtcTex);
   const frontKsrtcMat=new BABYLON.StandardMaterial("front KSRTC board material",scene);
-  frontKsrtcMat.diffuseTexture=frontKsrtcTex;frontKsrtcMat.emissiveColor=new BABYLON.Color3(.16,.16,.16);frontKsrtcMat.backFaceCulling=false;
-  const frontKsrtcBoard=BABYLON.MeshBuilder.CreatePlane("front KSRTC lettering board",{width:1.54,height:.19,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
-  frontKsrtcBoard.parent=bus;frontKsrtcBoard.position.set(0,3.38,5.535);frontKsrtcBoard.material=frontKsrtcMat;
+  frontKsrtcMat.diffuseTexture=frontKsrtcTex;frontKsrtcMat.emissiveColor=new BABYLON.Color3(.22,.22,.22);frontKsrtcMat.backFaceCulling=false;
+  const frontKsrtcBoard=BABYLON.MeshBuilder.CreatePlane("front KSRTC lettering board",{width:1.72,height:.235,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+  frontKsrtcBoard.parent=bus;frontKsrtcBoard.position.set(0,3.39,5.675);frontKsrtcBoard.material=frontKsrtcMat;
   // Broad tapered grille: shorter upper/lower slats and a wider centre, as in the photo.
   box("front grille outer surround",1.28,.76,.09,0,1.64,5.52,chrome);
   box("front grille dark inset",1.19,.68,.045,0,1.64,5.575,black);
