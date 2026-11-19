@@ -236,6 +236,23 @@
       box("side window upper aluminium rail",.035,.035,1.12,side*1.385,3.325,z,chrome);
       box("side window lower aluminium sill",.035,.035,1.12,side*1.385,2.245,z,chrome);
       box("sliding window latch",.045,.075,.055,side*1.405,2.39,z+.34,chrome);
+      // Rounded-corner rubber glazing bead follows the actual window perimeter.
+      const windowSealPath=[];
+      const sealX=side*1.405,halfW=.585,halfH=.555,cornerR=.105;
+      const corners=[
+        [z+halfW-cornerR,2.79+halfH-cornerR,0,90],
+        [z-halfW+cornerR,2.79+halfH-cornerR,90,180],
+        [z-halfW+cornerR,2.79-halfH+cornerR,180,270],
+        [z+halfW-cornerR,2.79-halfH+cornerR,270,360]
+      ];
+      for(const [cz,cy,start,end] of corners){
+        for(let a=0;a<=6;a++){
+          const angle=(start+(end-start)*a/6)*Math.PI/180;
+          windowSealPath.push(new BABYLON.Vector3(sealX,cy+cornerR*Math.sin(angle),cz+cornerR*Math.cos(angle)));
+        }
+      }
+      const roundedWindowSeal=BABYLON.MeshBuilder.CreateTube("rounded side window rubber bead",{path:windowSealPath,radius:.022,tessellation:8,closeArray:true},scene);
+      roundedWindowSeal.parent=bus;roundedWindowSeal.material=black;
 
       for(const curtainZ of [z-.48,z+.48]){
         box("interior window curtain",.025,.96,.045,side*1.325,2.79,curtainZ,seat);
