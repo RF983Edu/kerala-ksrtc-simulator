@@ -268,8 +268,15 @@
     box("door grab rail "+idx,.045,.72,.055,side*1.46,2.16,z+.37,chrome);
     box("door lower kick plate "+idx,.045,.12,.72,side*1.455,1.08,z,chrome);
 
-    // Visible low entry step.
+    // Visible low entry step with a non-slip tread surface and defined edge.
     box("entry step "+idx,.68,.12,.94,side*1.05,.46,z,chrome);
+    box("entry step dark tread pad "+idx,.57,.018,.78,side*1.05,.528,z,black);
+    for(let tread=0;tread<6;tread++){
+      box("entry step anti-slip groove "+idx+" "+tread,.53,.012,.025,side*1.05,.54,z-.31+tread*.124,chrome);
+    }
+    for(const edgeZ of [-.43,.43]){
+      box("entry step raised side lip "+idx,.035,.045,.035,side*1.05,.55,z+edgeZ,chrome);
+    }
   }
   // Plain lower side panels: this older high-floor Venad body has no modern coach luggage doors.
   // Wheel arches are upper semicircular mouldings, not full rings.
