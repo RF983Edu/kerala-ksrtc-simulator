@@ -238,9 +238,14 @@
     },scene);
     mirrorArm.parent=bus;
     mirrorArm.position=mirrorBase.add(mirrorTip).scale(.5);
-    mirrorArm.rotationQuaternion=BABYLON.Quaternion.FromUnitVectors(
-      BABYLON.Axis.Y,mirrorAxis.normalize()
-    );
+    const mirrorDirection=mirrorAxis.normalize();
+    const mirrorRotationAxis=BABYLON.Vector3.Cross(BABYLON.Axis.Y,mirrorDirection);
+    if(mirrorRotationAxis.lengthSquared()>1e-8){
+      mirrorArm.rotationQuaternion=BABYLON.Quaternion.RotationAxis(
+        mirrorRotationAxis.normalize(),
+        Math.acos(Math.max(-1,Math.min(1,BABYLON.Vector3.Dot(BABYLON.Axis.Y,mirrorDirection))))
+      );
+    }
     mirrorArm.material=black;
     box("rectangular exterior mirror housing",.38,.48,.14,side*1.59,3.12,5.36,black);
     box("mirror glass rear-facing surface",.31,.39,.025,side*1.59,3.12,5.275,glassFront);
