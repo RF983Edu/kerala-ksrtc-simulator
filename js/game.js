@@ -195,9 +195,23 @@
     box("side upper blue pinstripe",.035,.035,10.42,side*1.365,2.12,0,blue);
     box("side lower body rub rail",.045,.055,10.2,side*1.365,1.20,0,chrome);
 
-    const mirrorArm=box("front mirror support arm",.065,.07,.9,side*1.49,3.04,4.62,black);mirrorArm.rotation.y=side*.22;
-    box("large rectangular side mirror housing",.16,.42,.25,side*1.67,3.14,4.2,black);
-    box("side mirror glass",.035,.33,.19,side*1.765,3.14,4.2,glassFront);
+    // Properly projecting exterior mirrors: the reflective face looks rearward toward the driver.
+    const mirrorBase=new BABYLON.Vector3(side*1.24,3.08,5.03);
+    const mirrorTip=new BABYLON.Vector3(side*1.58,3.10,5.34);
+    const mirrorAxis=mirrorTip.subtract(mirrorBase);
+    const mirrorArm=BABYLON.MeshBuilder.CreateCylinder("angled exterior mirror support",{
+      height:mirrorAxis.length(),diameter:.075,tessellation:16
+    },scene);
+    mirrorArm.parent=bus;
+    mirrorArm.position=mirrorBase.add(mirrorTip).scale(.5);
+    mirrorArm.rotationQuaternion=BABYLON.Quaternion.FromUnitVectors(
+      BABYLON.Axis.Y,mirrorAxis.normalize()
+    );
+    mirrorArm.material=black;
+    box("rectangular exterior mirror housing",.38,.48,.14,side*1.59,3.12,5.36,black);
+    box("mirror glass rear-facing surface",.31,.39,.025,side*1.59,3.12,5.275,glassFront);
+    box("mirror glass inner highlight",.025,.30,.012,side*1.59,3.12,5.257,chrome);
+    box("mirror lower protective edge",.35,.035,.15,side*1.59,2.88,5.36,black);
   }
   // Two passenger doors, reflecting the two-door Venad layout.
   for(const [idx,z] of [[0,3.05],[1,-3.72]]){
