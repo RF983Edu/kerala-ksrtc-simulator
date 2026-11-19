@@ -135,6 +135,23 @@
   const grilleWidths=[.72,.88,1.02,1.12,1.12,1.02,.88,.72];
   for(let i=0;i<8;i++)box("tapered horizontal grille rib "+i,grilleWidths[i],.043,.04,0,1.35+i*.083,5.61,chrome);
   box("grille centre emblem mount",.24,.22,.06,0,1.64,5.645,hub);
+  // Refined front grille centre badge with a raised circular medallion and wing-like metal bars.
+  const grilleBadge=BABYLON.MeshBuilder.CreateCylinder("front grille centre medallion",{
+    diameter:.19,height:.075,tessellation:32
+  },scene);
+  grilleBadge.parent=bus;grilleBadge.rotation.x=Math.PI/2;
+  grilleBadge.position.set(0,1.64,5.69);grilleBadge.material=chrome;
+  const grilleBadgeCore=BABYLON.MeshBuilder.CreateCylinder("front grille badge inset",{
+    diameter:.105,height:.082,tessellation:24
+  },scene);
+  grilleBadgeCore.parent=bus;grilleBadgeCore.rotation.x=Math.PI/2;
+  grilleBadgeCore.position.set(0,1.64,5.735);grilleBadgeCore.material=blueDark;
+  for(const side of [-1,1]){
+    const wing=box("grille badge horizontal wing",.34,.035,.035,side*.255,1.64,5.675,chrome);
+    wing.rotation.z=side*.035;
+    const wingTip=box("grille badge wing tip",.055,.075,.04,side*.42,1.64,5.675,chrome);
+  }
+
   const badgeTex=new BABYLON.DynamicTexture("Ashok Leyland nameplate texture",{width:512,height:128},scene,false);
   const badgeCtx=badgeTex.getContext();
   badgeCtx.fillStyle="#e8e9e5";badgeCtx.fillRect(0,0,512,128);
