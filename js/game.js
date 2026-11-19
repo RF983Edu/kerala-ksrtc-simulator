@@ -163,6 +163,23 @@
     lens.parent=bus;lens.rotation.x=Math.PI/2;lens.position.set(x,1.42,5.61);lens.material=lamp;
     const indicator=box("small amber indicator",.19,.14,.07,x*1.12,1.17,5.57,amber);
   }
+  // Front lamp finishing: slim stainless bezels and recessed indicator surrounds.
+  for(const x of [-.99,.99]){
+    const outerHeadlampRing=BABYLON.MeshBuilder.CreateTorus("stainless headlamp outer ring",{
+      diameter:.46,thickness:.028,tessellation:32
+    },scene);
+    outerHeadlampRing.parent=bus;
+    outerHeadlampRing.position.set(x,1.42,5.665);
+    outerHeadlampRing.material=chrome;
+    const innerHeadlampRing=BABYLON.MeshBuilder.CreateTorus("headlamp inner glass rim",{
+      diameter:.255,thickness:.012,tessellation:32
+    },scene);
+    innerHeadlampRing.parent=bus;
+    innerHeadlampRing.position.set(x,1.42,5.668);
+    innerHeadlampRing.material=white;
+    box("amber indicator black gasket",.235,.18,.025,x*1.12,1.17,5.615,black);
+    box("amber indicator clear outer lens",.175,.12,.018,x*1.12,1.17,5.635,amber);
+  }
   box("full-width blue front bumper",2.65,.27,.22,0,.64,5.52,blueDark);
   box("bumper narrow silver edge",2.56,.045,.035,0,.50,5.65,chrome);
   // ONE driver's-side wiper, mounted at the upper windscreen edge.
