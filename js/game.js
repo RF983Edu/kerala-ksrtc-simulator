@@ -300,6 +300,35 @@
     box("mirror glass inner highlight",.025,.30,.012,side*1.59,3.12,5.257,chrome);
     box("mirror lower protective edge",.35,.035,.15,side*1.59,2.88,5.36,black);
   }
+  // Subtle convex lower side skins soften the slab-sided box shell.
+  // These overlays stay below the window band and above the blue lower livery.
+  for(const side of [-1,1]){
+    const sideSkinPaths=[];
+    for(let row=0;row<=32;row++){
+      const z=-5.18+row*(10.36/32),path=[];
+      const endTaper=Math.min(1,(5.28-Math.abs(z))/.34);
+      for(let col=0;col<=8;col++){
+        const y=1.035+col*(.49/8);
+        const vertical=Math.sin((col/8)*Math.PI);
+        const longitudinal=Math.max(0,endTaper);
+        const gentleBulge=.026*vertical*longitudinal;
+        path.push(new BABYLON.Vector3(side*(1.292+gentleBulge),y,z));
+      }
+      sideSkinPaths.push(path);
+    }
+    const sideSkin=BABYLON.MeshBuilder.CreateRibbon("gently crowned lower exterior side skin",{pathArray:sideSkinPaths,sideOrientation:BABYLON.Mesh.DOUBLESIDE},scene);
+    sideSkin.parent=bus;sideSkin.material=white;
+    // Fine pressed-panel crease running above the lower blue band.
+    const creasePath=[];
+    for(let i=0;i<=40;i++){
+      const z=-5.12+i*(10.24/40);
+      const endTaper=Math.min(1,(5.28-Math.abs(z))/.3);
+      creasePath.push(new BABYLON.Vector3(side*(1.307+.012*Math.max(0,endTaper)),1.075,z));
+    }
+    const crease=BABYLON.MeshBuilder.CreateTube("lower side panel pressed crease",{path:creasePath,radius:.009,tessellation:6},scene);
+    crease.parent=bus;crease.material=chrome;
+  }
+
   // Two passenger doors, reflecting the two-door Venad layout.
   for(const [idx,z] of [[0,3.05],[1,-3.72]]){
     const side=-1;
