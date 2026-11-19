@@ -411,6 +411,11 @@
   for(const side of [-1,1]){
     for(const z of [-4.75,-2.1,.25,2.55,4.7]){
       const marker=box("side amber marker lamp",.045,.11,.22,side*1.365,1.05,z,amber);
+      // Layered side-marker bezels and clear amber lenses for a more finished body edge.
+      box("side marker black gasket",.055,.16,.27,side*1.397,1.05,z,black);
+      box("side marker chrome rim",.025,.135,.245,side*1.432,1.05,z,chrome);
+      box("side marker amber lens",.018,.095,.20,side*1.449,1.05,z,amber);
+
     }
     for(const z of [-4.95,4.95]){
       const mudflap=box("rear wheel mudflap",.045,.62,.72,side*1.38,.46,z,black);
