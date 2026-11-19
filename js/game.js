@@ -28,7 +28,7 @@
     m.specularPower=48;
     return m;
   };
-  const grass=mat("Kerala roadside green","#557b4b"),roadMat=mat("Asphalt","#353c44"),white=mat("Venad ivory body","#e9e9df"),blue=mat("Venad sky blue","#65b6d8"),blueDark=mat("Blue lower edge","#2486b5"),glass=mat("Dark bus glass","#263b43"),glassFront=mat("Front windscreen glass","#7399a5"),rubber=mat("Tyre rubber","#111519"),hub=mat("Wheel hubs","#9da6a8"),black=mat("Black trim","#171e22"),chrome=mat("Aluminium trim","#b8c1c2"),lamp=mat("Headlamp glass","#fff2cf"),amber=mat("Amber indicators","#e5a13b"),red=mat("Rear lamps","#a52b26"),seat=mat("Bus seat upholstery","#425a63"),floorMat=mat("Interior floor","#555b59"),board=mat("Destination board","#17252a");
+  const grass=mat("Kerala roadside green","#557b4b"),roadMat=mat("Asphalt","#353c44"),white=mat("Venad ivory body","#e9e9df"),blue=mat("Venad sky blue","#65b6d8"),blueDark=mat("Blue lower edge","#2486b5"),glass=mat("Dark bus glass","#263b43"),glassFront=mat("Front windscreen glass","#7399a5"),rubber=mat("Tyre rubber","#111519"),hub=mat("Wheel hubs","#9da6a8"),black=mat("Black trim","#171e22"),chrome=mat("Aluminium trim","#b8c1c2"),lamp=mat("Headlamp glass","#fff2cf"),amber=mat("Amber indicators","#e5a13b"),red=mat("Rear lamps","#a52b26"),seat=mat("Bus seat upholstery","#425a63"),seatEdge=mat("Seat side bolsters","#344951"),floorMat=mat("Interior floor","#555b59"),board=mat("Destination board","#17252a");
   const ground=BABYLON.MeshBuilder.CreateGround("green landscape",{width:180,height:500},scene);ground.position.z=100;ground.material=grass;
   ground.receiveShadows=true;
   const shoulderMat=mat("Road shoulder gravel","#77796f");
@@ -471,6 +471,18 @@
       back.parent=interior;back.scaling.set(.29,.39,.105);back.position.set(x,1.82,z-.205);back.rotation.x=-.10;back.material=seat;
       const headPad=BABYLON.MeshBuilder.CreateSphere("upper seat back padded crown",{diameter:1,segments:16},scene);
       headPad.parent=interior;headPad.scaling.set(.255,.105,.085);headPad.position.set(x,2.13,z-.20);headPad.material=seat;
+      // Sculpted side bolsters and a soft lumbar pad give each passenger seat a more finished upholstered profile.
+      for(const bolsterSide of [-1,1]){
+        const backBolster=BABYLON.MeshBuilder.CreateSphere("passenger seat back side bolster",{diameter:1,segments:16},scene);
+        backBolster.parent=interior;backBolster.scaling.set(.085,.30,.095);
+        backBolster.position.set(x+bolsterSide*.215,1.83,z-.17);backBolster.material=seatEdge;
+        const cushionBolster=BABYLON.MeshBuilder.CreateSphere("passenger seat cushion side bolster",{diameter:1,segments:16},scene);
+        cushionBolster.parent=interior;cushionBolster.scaling.set(.075,.09,.255);
+        cushionBolster.position.set(x+bolsterSide*.225,1.47,z);cushionBolster.material=seatEdge;
+      }
+      const lumbarPad=BABYLON.MeshBuilder.CreateSphere("passenger seat lumbar padding",{diameter:1,segments:16},scene);
+      lumbarPad.parent=interior;lumbarPad.scaling.set(.17,.145,.045);
+      lumbarPad.position.set(x,1.79,z-.095);lumbarPad.material=seat;
       const support=BABYLON.MeshBuilder.CreateCylinder("seat pedestal support",{height:.36,diameter:.055,tessellation:16},scene);
       support.parent=interior;support.position.set(x,1.23,z);support.material=chrome;
     }
